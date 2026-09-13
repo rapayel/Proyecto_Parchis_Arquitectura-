@@ -1,0 +1,23 @@
+fondo claro: #7E3AA8
+fondo oscuro: #71187C
+
+titulo: #FFAA00
+titulo-sombra: #040A2D
+
+verde: 1E9948
+azul: 0E74DD
+rojo: E8202F
+amarillo: FEB403
+
+configurar
+
+Números de las fichas con las que se juegan (entre 3 y 6). 
+
+Además, se podrá configurar el número de casillas seguras por ala del tablero, de 1
+a 5.
+
+También se podrá configurar el número que debe salir en el dado para sacar fichas del círculo de inicio; 
+por defecto es 5, pero se puede asignar cualquier otro número del dado
+
+
+
