@@ -1,0 +1,8 @@
+org\dominio\entidades\Ficha$Estado.class
+org\dominio\entidades\Casilla.class
+org\dominio\entidades\Jugador.class
+org\dominio\fachada\IFachadaJuego.class
+org\dominio\entidades\Ficha.class
+org\dominio\fachada\FachadaJuego.class
+org\dominio\main\Main.class
+org\dominio\entidades\Tablero.class
