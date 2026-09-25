@@ -1,0 +1,10 @@
+org\salida\DispatcherFactory.class
+org\comunes\Observer.class
+org\salida\ClienteTCP.class
+org\comunes\ContextoConexion.class
+org\comunes\Subject.class
+org\salida\IDispatcher.class
+org\salida\Dispatcher.class
+org\entrada\IReceptorExterno.class
+org\entrada\Receptor.class
+org\entrada\ServidorTCP.class
