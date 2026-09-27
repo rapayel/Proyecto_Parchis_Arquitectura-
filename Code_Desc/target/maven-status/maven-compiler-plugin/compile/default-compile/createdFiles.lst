@@ -1,0 +1,5 @@
+org\code_desc\CodeDescFactory.class
+org\code_desc\Deserializador.class
+org\code_desc\Serializador.class
+org\code_desc\IDeserializador.class
+org\code_desc\ISerializador.class
