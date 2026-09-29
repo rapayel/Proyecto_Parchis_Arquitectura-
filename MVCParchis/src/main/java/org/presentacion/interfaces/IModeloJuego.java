@@ -14,6 +14,4 @@ public interface IModeloJuego {
     public void notificarObservadores();
     public void solicitarLanzarDado(int idJugador);
     public void solicitarSeleccionarFicha(int idJugador, int idFicha);
-    public int getUltimoDado();
-    public int getIdJugadorTurno();
 }

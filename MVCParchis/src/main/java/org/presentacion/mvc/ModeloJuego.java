@@ -13,14 +13,15 @@ import org.dtos.*;
  * 
  * @author Equipo 1
  */
-public class ModeloJuego implements IModeloJuego{
+public class ModeloJuego implements IModeloJuego, IModeloLectura{
     private List<Observador> observadores;
-    private int ultimoDado;
-    private int idJugadorTurno;
-    private IFachadaJuego FachadaJuego;
+    private IFachadaJuego fachadaJuego;
+    private ResultadoLanzarDadoDTO ultimoResultadoDado;
+    private ResultadoSeleccionarFichaDTO ultimoResultadoFicha;
     
-    public ModeloJuego() {
+    public ModeloJuego(IFachadaJuego fachadaJuego) {
         this.observadores = new ArrayList<>();
+        this.fachadaJuego = fachadaJuego;
     }
 
     @Override
@@ -35,31 +36,30 @@ public class ModeloJuego implements IModeloJuego{
 
     @Override
     public void notificarObservadores() {
-        for (Observador obs : observadores) {
-            obs.update(this);
+        for (Observador observador : observadores) {
+            observador.update(this);
         }
     }
 
     @Override
     public void solicitarLanzarDado(int idJugador) {
-        //en construccion
+        this.ultimoResultadoDado = fachadaJuego.lanzarDado(new LanzarDadoDTO(idJugador));
         notificarObservadores();
     }
 
     @Override
     public void solicitarSeleccionarFicha(int idJugador, int idFicha) {
-        //en construccion
-        
+        this.ultimoResultadoFicha = fachadaJuego.seleccionarFicha(new SeleccionarFichaDTO(idJugador, idFicha));
         notificarObservadores();
     }
-
+    
     @Override
-    public int getUltimoDado() {
-        return ultimoDado;
+    public ResultadoLanzarDadoDTO getUltimoResultadoDado() {
+        return ultimoResultadoDado;
     }
 
     @Override
-    public int getIdJugadorTurno() {
-        return idJugadorTurno;
+    public ResultadoSeleccionarFichaDTO getUltimoResultadoFicha() {
+        return ultimoResultadoFicha;
     }
 }

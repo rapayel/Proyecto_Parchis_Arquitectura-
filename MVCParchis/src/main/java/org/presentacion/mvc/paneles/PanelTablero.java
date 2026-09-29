@@ -5,7 +5,7 @@
 package org.presentacion.mvc.paneles;
 
 import javax.swing.JPanel;
-import org.presentacion.interfaces.IModeloJuego;
+import org.presentacion.interfaces.IModeloLectura;
 
 /**
  * 
@@ -17,7 +17,7 @@ public class PanelTablero extends JPanel{
         
     }
     
-    public void actualizarEstadoTablero(IModeloJuego modelo){
+    public void actualizarEstadoTablero(IModeloLectura modelo){
         
     }
 }

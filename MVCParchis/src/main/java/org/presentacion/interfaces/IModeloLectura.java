@@ -4,10 +4,13 @@
  */
 package org.presentacion.interfaces;
 
+import org.dtos.*;
+
 /**
  *
- * @author Equipo 1
+ * @author lagar
  */
-public interface Observador {
-    void update(IModeloLectura modelo);
+public interface IModeloLectura {
+    ResultadoLanzarDadoDTO getUltimoResultadoDado();
+    ResultadoSeleccionarFichaDTO getUltimoResultadoFicha();
 }
