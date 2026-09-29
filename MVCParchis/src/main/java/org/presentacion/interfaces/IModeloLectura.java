@@ -4,13 +4,19 @@
  */
 package org.presentacion.interfaces;
 
-import org.dtos.*;
-
 /**
  *
  * @author lagar
  */
 public interface IModeloLectura {
-    ResultadoLanzarDadoDTO getUltimoResultadoDado();
-    ResultadoSeleccionarFichaDTO getUltimoResultadoFicha();
+    int getValorDado();
+    boolean puedeVolverATirar();
+    boolean puedeSacarFicha();
+    boolean tieneMovimientoValido();
+    
+    int getIdFichaSeleccionada();
+    int getPosicionFicha();
+    boolean isCapturo();
+    boolean isLlegoAMeta();
+    boolean isCambioTurno();
 }

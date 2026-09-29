@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package org.presentacion.mvc;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.presentacion.interfaces.*;
@@ -13,7 +14,7 @@ import org.dtos.*;
  * 
  * @author Equipo 1
  */
-public class ModeloJuego implements IModeloJuego, IModeloLectura{
+public class ModeloJuego implements IModeloJuego, IModeloLectura {
     private List<Observador> observadores;
     private IFachadaJuego fachadaJuego;
     private ResultadoLanzarDadoDTO ultimoResultadoDado;
@@ -54,12 +55,47 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura{
     }
     
     @Override
-    public ResultadoLanzarDadoDTO getUltimoResultadoDado() {
-        return ultimoResultadoDado;
+    public int getValorDado() {
+        return ultimoResultadoDado != null ? ultimoResultadoDado.getResultadoDado() : 0;
     }
 
     @Override
-    public ResultadoSeleccionarFichaDTO getUltimoResultadoFicha() {
-        return ultimoResultadoFicha;
+    public boolean puedeVolverATirar() {
+        return ultimoResultadoDado != null && ultimoResultadoDado.isPuedeVolverATirar();
+    }
+
+    @Override
+    public boolean puedeSacarFicha() {
+        return ultimoResultadoDado != null && ultimoResultadoDado.isPuedeSacarFicha();
+    }
+
+    @Override
+    public boolean tieneMovimientoValido() {
+        return ultimoResultadoDado != null && ultimoResultadoDado.isTieneMovimientoValido();
+    }
+
+    @Override
+    public int getIdFichaSeleccionada() {
+        return ultimoResultadoFicha != null ? ultimoResultadoFicha.getIdFicha() : -1;
+    }
+
+    @Override
+    public int getPosicionFicha() {
+        return ultimoResultadoFicha != null ? ultimoResultadoFicha.getPosicionFicha() : -1;
+    }
+
+    @Override
+    public boolean isCapturo() {
+        return ultimoResultadoFicha != null && ultimoResultadoFicha.isCapturo();
+    }
+
+    @Override
+    public boolean isLlegoAMeta() {
+        return ultimoResultadoFicha != null && ultimoResultadoFicha.isLlegoAMeta();
+    }
+
+    @Override
+    public boolean isCambioTurno() {
+        return ultimoResultadoFicha != null && ultimoResultadoFicha.isCambioTurno();
     }
 }
