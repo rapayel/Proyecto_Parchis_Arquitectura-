@@ -6,9 +6,12 @@ package org.presentacion.interfaces;
 
 /**
  *
- * @author lagar
+ * @author Equipo 1
  */
 public interface IModeloLectura {
+    void registrarObservador(Observador o);
+    void removerObservador(Observador o);
+    void notificarObservadores();
     int getValorDado();
     boolean puedeVolverATirar();
     boolean puedeSacarFicha();

@@ -1,8 +1,10 @@
-org\presentacion\interfaces\IModeloJuego.class
-org\presentacion\mvc\paneles\PanelTablero.class
+org\presentacion\mvc\paneles\PanelJugador.class
 org\presentacion\interfaces\Observador.class
 org\presentacion\interfaces\IModeloLectura.class
 org\presentacion\mvc\ModeloJuego.class
 org\presentacion\mvc\paneles\PanelControles.class
-org\presentacion\mvc\ControladorJuego.class
 org\presentacion\mvc\FrmTableroJuego.class
+org\presentacion\interfaces\IModeloJuego.class
+org\presentacion\mvc\paneles\PanelControles$ComponenteDado.class
+org\presentacion\mvc\paneles\PanelTablero.class
+org\presentacion\mvc\ControladorJuego.class

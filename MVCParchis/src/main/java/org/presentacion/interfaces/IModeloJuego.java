@@ -9,9 +9,6 @@ package org.presentacion.interfaces;
  * @author Equipo 1
  */
 public interface IModeloJuego {
-    public void registrarObservador(Observador o);
-    public void removerObservador(Observador o);
-    public void notificarObservadores();
     public void solicitarLanzarDado(int idJugador);
     public void solicitarSeleccionarFicha(int idJugador, int idFicha);
 }
