@@ -6,6 +6,8 @@ package org.presentacion.mvc;
 import java.util.ArrayList;
 import java.util.List;
 import org.presentacion.interfaces.*;
+import org.dominio.fachada.IFachadaJuego;
+import org.dtos.*;
 
 /**
  * 
@@ -15,6 +17,7 @@ public class ModeloJuego implements IModeloJuego{
     private List<Observador> observadores;
     private int ultimoDado;
     private int idJugadorTurno;
+    private IFachadaJuego FachadaJuego;
     
     public ModeloJuego() {
         this.observadores = new ArrayList<>();
