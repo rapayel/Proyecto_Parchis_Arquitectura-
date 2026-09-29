@@ -8,11 +8,12 @@ import javax.swing.JPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.*;
+
 /**
  * 
  * @author Equipo 1
  */
-public class PanelTablero extends JPanel{
+public class PanelTablero extends JPanel {
     private final Color JUGADOR_1 = new Color(0xFF3B30); 
     private final Color JUGADOR_2 = new Color(0x5AA0F5);
     private final Color JUGADOR_3 = new Color(0xF7F03C); 
@@ -23,7 +24,7 @@ public class PanelTablero extends JPanel{
     
     public PanelTablero() {
         setPreferredSize(new Dimension(620, 620));
-        setBackground(Color.WHITE);
+        setOpaque(false);
     }
     
     @Override
@@ -39,11 +40,6 @@ public class PanelTablero extends JPanel{
  
         double c = S * 0.33;        
         double a = (S - c) / 2.0;   
- 
-        g.setColor(Color.WHITE);
-        g.fill(new Rectangle2D.Double(0, 0, S, S));
- 
-        // Casas (esquinas): arriba-izq, arriba-der, abajo-der, abajo-izq
         double[][] pos = {{0, 0}, {S - a, 0}, {S - a, S - a}, {0, S - a}};
         for (int i = 0; i < 4; i++) {
             dibujarCasa(g, pos[i][0], pos[i][1], a, i, S);
@@ -78,8 +74,8 @@ public class PanelTablero extends JPanel{
                 double x = a + j * cw;
                 double y = r * ch;
  
-                boolean carril = (j == 1 && r >= 1);   // carril de color hacia el centro
-                boolean salida = (j == 0 && r == 4);   // casilla de salida
+                boolean carril = (j == 1 && r >= 1);
+                boolean salida = (j == 0 && r == 4);
                 g.setColor(carril || salida ? color : Color.WHITE);
                 g.fill(new Rectangle2D.Double(x, y, cw, ch));
                 g.setColor(Color.BLACK);
@@ -136,6 +132,9 @@ public class PanelTablero extends JPanel{
     }
     
     private void dibujarCasa(Graphics2D g, double x, double y, double tam, int indice, double S) {
+        g.setColor(Color.WHITE);
+        g.fill(new Rectangle2D.Double(x, y, tam, tam));
+
         double cx = x + tam / 2, cy = y + tam / 2;
         double r = tam * 0.43;
         float grosor = (float) Math.max(1, S / 400);
@@ -175,7 +174,6 @@ public class PanelTablero extends JPanel{
         }
     }
 
-    public void actualizarEstadoTablero(){
-        
+    public void actualizarEstadoTablero() {
     }
 }

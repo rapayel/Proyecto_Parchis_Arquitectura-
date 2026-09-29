@@ -7,6 +7,7 @@ package org.presentacion.mvc.paneles;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -21,7 +22,7 @@ import org.presentacion.mvc.ControladorJuego;
 
 /**
  * 
- * @author Equipo 1
+ * @author lagar
  */
 public class PanelControles extends JPanel {
     private JButton btnLanzarDado;
@@ -34,15 +35,45 @@ public class PanelControles extends JPanel {
         this.controlador = controlador;
         this.random = new Random();
 
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(15, 15));
         setOpaque(false);
 
         componenteDado = new ComponenteDado();
         this.add(componenteDado, BorderLayout.CENTER);
+        btnLanzarDado = new JButton("Lanzar Dado") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        btnLanzarDado = new JButton("Lanzar Dado");
-        btnLanzarDado.setFont(new Font("SansSerif", Font.BOLD, 14));
+                if (getModel().isPressed()) {
+                    g2.setColor(new Color(220, 100, 30));
+                } else if (getModel().isRollover()) {
+                    g2.setColor(new Color(255, 140, 0));
+                } else if (!isEnabled()) {
+                    g2.setColor(new Color(180, 180, 180));
+                } else {
+                    g2.setColor(new Color(245, 120, 20));
+                }
+
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
+
+                g2.setColor(Color.WHITE);
+                g2.setFont(getFont());
+                int anchoTexto = g2.getFontMetrics().stringWidth(getText());
+                int altoTexto = g2.getFontMetrics().getAscent();
+                g2.drawString(getText(), (getWidth() - anchoTexto) / 2, (getHeight() + altoTexto) / 2 - 3);
+
+                g2.dispose();
+            }
+        };
+
+        btnLanzarDado.setFont(new Font("SansSerif", Font.BOLD, 15));
+        btnLanzarDado.setPreferredSize(new Dimension(150, 45));
+        btnLanzarDado.setContentAreaFilled(false);
+        btnLanzarDado.setBorderPainted(false);
         btnLanzarDado.setFocusPainted(false);
+        btnLanzarDado.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         timerAnimacion = new Timer(80, e -> {
             int caraAleatoria = random.nextInt(6) + 1;
@@ -69,6 +100,7 @@ public class PanelControles extends JPanel {
 
             int idJugadorPrueba = 1;
             this.controlador.lanzarDado(idJugadorPrueba);
+
             btnLanzarDado.setEnabled(true);
         });
         
@@ -90,7 +122,7 @@ public class PanelControles extends JPanel {
 
         public ComponenteDado() {
             setOpaque(false);
-            setPreferredSize(new Dimension(100, 100));
+            setPreferredSize(new Dimension(110, 110));
         }
 
         public void setCara(int cara) {

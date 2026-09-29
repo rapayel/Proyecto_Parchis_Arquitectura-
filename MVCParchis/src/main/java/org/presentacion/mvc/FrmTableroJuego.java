@@ -5,13 +5,14 @@
 package org.presentacion.mvc;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import org.dominio.fachada.FachadaJuego;
-import org.dominio.fachada.IFachadaJuego;
 import org.presentacion.interfaces.IModeloLectura;
 import org.presentacion.interfaces.Observador;
 import org.presentacion.mvc.paneles.PanelControles;
@@ -31,42 +32,58 @@ public class FrmTableroJuego extends JFrame implements Observador {
     private PanelJugador panelJugador3;
     private PanelJugador panelJugador4;
 
-    public FrmTableroJuego(ControladorJuego controlador, IModeloLectura modelo) {
+    public FrmTableroJuego(
+            ControladorJuego controlador, 
+            IModeloLectura modelo,
+            PanelTablero panelTablero,
+            PanelControles panelControles,
+            PanelJugador panelJugador1,
+            PanelJugador panelJugador2,
+            PanelJugador panelJugador3,
+            PanelJugador panelJugador4) {
+
         this.controlador = controlador;
         modelo.registrarObservador(this);
+
+        this.panelTablero = panelTablero;
+        this.panelControles = panelControles;
+        this.panelJugador1 = panelJugador1;
+        this.panelJugador2 = panelJugador2;
+        this.panelJugador3 = panelJugador3;
+        this.panelJugador4 = panelJugador4;
 
         this.setTitle("Juego de Parchís");
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
-        this.setLayout(new BorderLayout(10, 10));
+        PanelFondo panelPrincipal = new PanelFondo("/fondoparchis.png");
+        panelPrincipal.setLayout(new BorderLayout(10, 10));
+        this.setContentPane(panelPrincipal);
 
-        this.panelTablero = new PanelTablero();
-        this.panelControles = new PanelControles(this.controlador);
-
-        this.panelJugador1 = new PanelJugador("Jugador 1", null, new Color(0xFF3B30));
-        this.panelJugador2 = new PanelJugador("Jugador 2", null, new Color(0x5AA0F5));
-        this.panelJugador3 = new PanelJugador("Jugador 3", null, new Color(0xF7F03C));
-        this.panelJugador4 = new PanelJugador("Jugador 4", null, new Color(0x6CCB4B));
-
+        // Panel Norte
         JPanel panelNorte = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 5));
-        panelNorte.add(panelJugador1);
-        panelNorte.add(panelJugador2);
+        panelNorte.setOpaque(false);
+        panelNorte.add(this.panelJugador1);
+        panelNorte.add(this.panelJugador2);
 
-        JPanel panelSur = new JPanel(new BorderLayout());
-        JPanel panelJugadoresSur = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 5));
-        panelJugadoresSur.add(panelJugador3);
-        panelJugadoresSur.add(panelJugador4);
-        
-        panelSur.add(panelJugadoresSur, BorderLayout.NORTH);
-        panelSur.add(panelControles, BorderLayout.SOUTH);
+        // Panel Sur (Únicamente jugadores de abajo)
+        JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 5));
+        panelSur.setOpaque(false);
+        panelSur.add(this.panelJugador3);
+        panelSur.add(this.panelJugador4);
 
-        this.add(panelNorte, BorderLayout.NORTH);
-        this.add(panelTablero, BorderLayout.CENTER);
-        this.add(panelSur, BorderLayout.SOUTH);
+        // Panel Este (Controles a la derecha)
+        JPanel panelEste = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 20));
+        panelEste.setOpaque(false);
+        panelEste.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30));
+        panelEste.add(this.panelControles);
+
+        panelPrincipal.add(panelNorte, BorderLayout.NORTH);
+        panelPrincipal.add(this.panelTablero, BorderLayout.CENTER);
+        panelPrincipal.add(panelSur, BorderLayout.SOUTH);
+        panelPrincipal.add(panelEste, BorderLayout.EAST);
+
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        
         this.setLocationRelativeTo(null);
-        this.setVisible(true);
     }
 
     @Override
@@ -76,13 +93,24 @@ public class FrmTableroJuego extends JFrame implements Observador {
 
     private void actualizarVistaPrivado(IModeloLectura modelo) {
     }
-    
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            IFachadaJuego fachadaJuego = new FachadaJuego(null);
-            ModeloJuego modeloJuego = new ModeloJuego(fachadaJuego);
-            ControladorJuego controladorJuego = new ControladorJuego(modeloJuego);
-            new FrmTableroJuego(controladorJuego, modeloJuego);
-        });
+
+    private class PanelFondo extends JPanel {
+        private Image imagenFondo;
+
+        public PanelFondo(String rutaImagen) {
+            try {
+                this.imagenFondo = ImageIO.read(getClass().getResource(rutaImagen));
+            } catch (IOException | IllegalArgumentException e) {
+                System.err.println("No se pudo cargar la imagen de fondo: " + rutaImagen);
+            }
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (imagenFondo != null) {
+                g.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
+            }
+        }
     }
 }
