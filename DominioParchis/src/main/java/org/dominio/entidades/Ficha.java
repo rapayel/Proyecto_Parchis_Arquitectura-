@@ -6,7 +6,7 @@ package org.dominio.entidades;
 
 /**
  * 
- * @author Equipo 1
+ * @author lagar
  */
 public class Ficha {
     private int id;
@@ -37,21 +37,21 @@ public class Ficha {
         int nuevaPosicion = posicion + cantidad;
 
         if (nuevaPosicion == limiteMeta) {
-            posicion = limiteMeta;
+            setPosicion(limiteMeta);
             estado = Estado.META;
             return true;
         } else if (nuevaPosicion > limiteMeta) {
             int exceso = nuevaPosicion - limiteMeta;
-            posicion = limiteMeta - exceso;
+            setPosicion(limiteMeta - exceso);
             return false;
         } else {
-            posicion = nuevaPosicion;
+            setPosicion(nuevaPosicion);
             return false;
         }
     }
 
     public void regresarASalida() {
-        posicion = -1;
+        setPosicion(-1);
         estado = Estado.SALIDA;
     }
 

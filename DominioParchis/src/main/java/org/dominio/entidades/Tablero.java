@@ -14,7 +14,7 @@ import java.util.Random;
 
 /**
  * 
- * @author Equipo 1
+ * @author lagar
  */
 public class Tablero {
     private List<Jugador> jugadores;
@@ -28,7 +28,10 @@ public class Tablero {
     private final int casillasSegurasPorAla;
     private final int totalCasillas = 68;
 
-    public Tablero(int numeroParaSacarFicha, int casillasSegurasPorAla) {
+    public Tablero(List<Jugador> jugadores, int numeroParaSacarFicha, int casillasSegurasPorAla) {
+        if (jugadores == null || jugadores.size() < 2 || jugadores.size() > 4) {
+            throw new IllegalArgumentException("El tablero requiere entre 2 y 4 jugadores.");
+        }
         if (numeroParaSacarFicha < 1 || numeroParaSacarFicha > 6) {
             throw new IllegalArgumentException("El número para sacar ficha debe estar entre 1 y 6.");
         }
@@ -40,6 +43,10 @@ public class Tablero {
         this.casillasSegurasPorAla = casillasSegurasPorAla;
 
         this.jugadores = new ArrayList<>();
+        for (Jugador jugador : jugadores) {
+            agregarJugador(jugador);
+        }
+
         this.casillas = new ArrayList<>();
         this.jugadorTurno = 0;
         this.resultadoDado = 0;
@@ -56,7 +63,7 @@ public class Tablero {
         }
     }
 
-    public void agregarJugador(Jugador jugador) {
+    private void agregarJugador(Jugador jugador) {
         this.jugadores.add(jugador);
     }
 
@@ -149,6 +156,10 @@ public class Tablero {
             if (posDestino > 0 && posDestino <= totalCasillas) {
                 Casilla casillaDestino = casillas.get(posDestino - 1);
 
+                if (casillaDestino.formaBarrera()) {
+                    throw new IllegalStateException("La casilla destino tiene una barrera.");
+                }
+
                 if (casillaDestino.estaOcupada() && casillaDestino.tieneFichaRival(jugador)) {
                     if (!casillaDestino.estaSegura()) {
                         Ficha fichaRival = casillaDestino.obtenerFichaRival(jugador);
@@ -165,15 +176,12 @@ public class Tablero {
         ultimaFichaMovida = ficha;
 
         if (llegoAMeta && jugador.tieneFichaEnJuego()) {
-            for (Ficha otraFicha : jugador.getFichas()) {
-                if (otraFicha.estaEnJuego() && otraFicha != ficha) {
-                    otraFicha.avanzarORebotar(10, 76);
-                    break;
-                }
-            }
+            jugador.moverFichaAdicionalPremio(ficha, 10, 76);
         }
 
-        boolean cambioTurno = !puedeVolverATirar();
+        boolean esGanador = jugador.todasLlegaronAMeta();
+
+        boolean cambioTurno = !puedeVolverATirar() || esGanador;
         if (cambioTurno) {
             cambiarTurno();
         } else {

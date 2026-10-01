@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 
- * @author Equipo 1
+ * @author lagar
  */
 public class Jugador {
     private int id;
@@ -17,15 +17,29 @@ public class Jugador {
     private String avatar;
     private List<Ficha> fichas;
 
-    public Jugador(int id, String nombre, String avatar) {
+    public Jugador(int id, String nombre, String avatar, List<Ficha> fichas) {
+        if (fichas == null || fichas.isEmpty()) {
+            throw new IllegalArgumentException("El jugador debe crearse con sus fichas correspondientes.");
+        }
+        if (fichas.size() != 4) {
+            throw new IllegalArgumentException("El jugador debe contar exactamente con 4 fichas.");
+        }
+
         this.id = id;
         this.nombre = nombre;
         this.avatar = avatar;
         this.fichas = new ArrayList<>();
+
+        for (Ficha ficha : fichas) {
+            agregarFicha(ficha);
+        }
     }
 
-    public void agregarFicha(Ficha ficha) {
-        fichas.add(ficha);
+    private void agregarFicha(Ficha ficha) {
+        if (ficha == null) {
+            throw new IllegalArgumentException("La ficha no puede ser nula.");
+        }
+        this.fichas.add(ficha);
     }
 
     public Ficha obtenerFicha(int idFicha) {
@@ -64,8 +78,13 @@ public class Jugador {
         return true;
     }
 
-    public List<Ficha> getFichas() {
-        return fichas;
+    public void moverFichaAdicionalPremio(Ficha fichaExcluida, int pasos, int limiteMeta) {
+        for (Ficha otraFicha : fichas) {
+            if (otraFicha.estaEnJuego() && otraFicha != fichaExcluida) {
+                otraFicha.avanzarORebotar(pasos, limiteMeta);
+                break;
+            }
+        }
     }
 
     public int getId() {
@@ -76,7 +95,7 @@ public class Jugador {
         return nombre;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public String getPerfilCompleto() {
+        return nombre + " (" + avatar + ")";
     }
 }

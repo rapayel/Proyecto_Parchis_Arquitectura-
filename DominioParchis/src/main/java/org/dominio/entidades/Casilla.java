@@ -72,11 +72,7 @@ public class Casilla {
         return null;
     }
 
-    public int getPosicion() {
-        return posicion;
-    }
-
-    public List<Ficha> getFichas() {
-        return fichas;
+    public boolean esMismaPosicion(int pos) {
+        return this.posicion == pos;
     }
 }

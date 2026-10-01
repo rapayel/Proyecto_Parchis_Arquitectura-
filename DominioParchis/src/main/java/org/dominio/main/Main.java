@@ -4,16 +4,12 @@
  */
 package org.dominio.main;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import org.dtos.LanzarDadoDTO;
-import org.dtos.ResultadoLanzarDadoDTO;
-import org.dtos.ResultadoSeleccionarFichaDTO;
-import org.dtos.SeleccionarFichaDTO;
-import org.dominio.entidades.Ficha;
-import org.dominio.entidades.Jugador;
-import org.dominio.entidades.Tablero;
-import org.dominio.fachada.FachadaJuego;
-import org.dominio.fachada.IFachadaJuego;
+import org.dtos.*;
+import org.dominio.entidades.*;
+import org.dominio.fachada.*;
 
 /**
  * 
@@ -23,27 +19,19 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
+        List<Jugador> listaJugadores = new ArrayList<>();
+        for (int idx = 1; idx <= 4; idx++) {
+            List<Ficha> fichasJugador = new ArrayList<>();
+            int baseFichaId = idx * 10;
+            for (int i = 1; i <= 4; i++) {
+                fichasJugador.add(new Ficha(baseFichaId + i, null));
+            }
+            Jugador jugador = new Jugador(idx, "Jugador " + idx, "Avatar" + idx, fichasJugador);
+            listaJugadores.add(jugador);
+        }
         int numParaSalir = 5;
         int casillasSeguras = 2;
-        Tablero tablero = new Tablero(numParaSalir, casillasSeguras);
-
-        Jugador j1 = new Jugador(1, "Jugador 1", "Avatar1");
-        Jugador j2 = new Jugador(2, "Jugador 2", "Avatar2");
-        Jugador j3 = new Jugador(3, "Jugador 3", "Avatar3");
-        Jugador j4 = new Jugador(4, "Jugador 4", "Avatar4");
-
-        Jugador[] jugadores = {j1, j2, j3, j4};
-
-        for (int idx = 0; idx < jugadores.length; idx++) {
-            Jugador j = jugadores[idx];
-            int baseFichaId = (idx + 1) * 10;
-            for (int i = 1; i <= 4; i++) {
-                j.agregarFicha(new Ficha(baseFichaId + i, j));
-            }
-            tablero.agregarJugador(j);
-        }
-
+        Tablero tablero = new Tablero(listaJugadores, numParaSalir, casillasSeguras);
         IFachadaJuego juego = new FachadaJuego(tablero);
         boolean juegoActivo = true;
 
@@ -54,12 +42,8 @@ public class Main {
             int idJugadorActual = jugadorActual.getId();
 
             System.out.println("\n==================================================");
-            System.out.println("TURNO DEL JUGADOR: " + jugadorActual.getNombre() + " (ID Jugador: " + idJugadorActual + ")");
-            System.out.print("Fichas de este jugador -> ");
-            for (Ficha f : jugadorActual.getFichas()) {
-                System.out.print("[ID: " + f.getId() + " | Pos: " + f.getPosicion() + " | Estado: " + f.getEstado() + "] ");
-            }
-            System.out.println("\n--------------------------------------------------");
+            System.out.println("TURNO DEL JUGADOR: " + jugadorActual.getPerfilCompleto() + " (ID: " + idJugadorActual + ")");
+            System.out.println("--------------------------------------------------");
             System.out.println("Presiona ENTER para lanzar el dado...");
             scanner.nextLine();
 
@@ -68,8 +52,6 @@ public class Main {
                 ResultadoLanzarDadoDTO resDado = juego.lanzarDado(lanzarDto);
 
                 System.out.println("--> Dado obtenido: [" + resDado.getResultadoDado() + "]");
-                System.out.println("¿Puede sacar ficha del círculo?: " + resDado.isPuedeSacarFicha());
-                System.out.println("¿Puede repetir tiro por sacarle 6?: " + resDado.isPuedeVolverATirar());
 
                 if (!resDado.isTieneMovimientoValido()) {
                     System.out.println("\n[!] No tienes movimientos válidos posibles.");
