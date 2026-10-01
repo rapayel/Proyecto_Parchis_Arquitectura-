@@ -27,30 +27,21 @@ public class FrmTableroJuego extends JFrame implements Observador {
     private ControladorJuego controlador;
     private PanelTablero panelTablero;
     private PanelControles panelControles;
-    private PanelJugador panelJugador1;
-    private PanelJugador panelJugador2;
-    private PanelJugador panelJugador3;
-    private PanelJugador panelJugador4;
+    private PanelJugador[] panelesJugadores;
 
     public FrmTableroJuego(
             ControladorJuego controlador, 
             IModeloLectura modelo,
             PanelTablero panelTablero,
             PanelControles panelControles,
-            PanelJugador panelJugador1,
-            PanelJugador panelJugador2,
-            PanelJugador panelJugador3,
-            PanelJugador panelJugador4) {
+            PanelJugador[] panelesJugadores) {
 
         this.controlador = controlador;
         modelo.registrarObservador(this);
 
         this.panelTablero = panelTablero;
         this.panelControles = panelControles;
-        this.panelJugador1 = panelJugador1;
-        this.panelJugador2 = panelJugador2;
-        this.panelJugador3 = panelJugador3;
-        this.panelJugador4 = panelJugador4;
+        this.panelesJugadores = panelesJugadores;
 
         this.setTitle("Juego de Parchís");
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -59,19 +50,16 @@ public class FrmTableroJuego extends JFrame implements Observador {
         panelPrincipal.setLayout(new BorderLayout(10, 10));
         this.setContentPane(panelPrincipal);
 
-        // Panel Norte
         JPanel panelNorte = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 5));
         panelNorte.setOpaque(false);
-        panelNorte.add(this.panelJugador1);
-        panelNorte.add(this.panelJugador2);
+        if (panelesJugadores.length > 0) panelNorte.add(this.panelesJugadores[0]);
+        if (panelesJugadores.length > 1) panelNorte.add(this.panelesJugadores[1]);
 
-        // Panel Sur (Únicamente jugadores de abajo)
         JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 5));
         panelSur.setOpaque(false);
-        panelSur.add(this.panelJugador3);
-        panelSur.add(this.panelJugador4);
+        if (panelesJugadores.length > 2) panelSur.add(this.panelesJugadores[2]);
+        if (panelesJugadores.length > 3) panelSur.add(this.panelesJugadores[3]);
 
-        // Panel Este (Controles a la derecha)
         JPanel panelEste = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 20));
         panelEste.setOpaque(false);
         panelEste.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30));

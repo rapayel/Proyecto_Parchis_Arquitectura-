@@ -5,28 +5,62 @@
 package org.presentacion.mvc.paneles;
 
 import javax.swing.JPanel;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
  * @author Equipo 1
  */
 public class PanelTablero extends JPanel {
-    private final Color JUGADOR_1 = new Color(0xFF3B30); 
-    private final Color JUGADOR_2 = new Color(0x5AA0F5);
-    private final Color JUGADOR_3 = new Color(0xF7F03C); 
-    private final Color JUGADOR_4 = new Color(0x6CCB4B);
     private final Color COLOR_MARCO = new Color(0x7A5230);
     private final boolean MOSTRAR_NUMEROS = true;
-    private final Color[] colores = {JUGADOR_1, JUGADOR_2, JUGADOR_3, JUGADOR_4};
     
-    public PanelTablero() {
+    private final Color[] coloresJugadores;
+    private final int fichasPorJugador;
+    private final int casillasSegurasPorAla;
+    private final int numeroSalidaDado;
+
+    private List<FichaVista> fichas;
+
+    public PanelTablero(Color[] coloresJugadores, int fichasPorJugador, int casillasSegurasPorAla, int numeroSalidaDado) {
+        this.coloresJugadores = coloresJugadores;
+        this.fichasPorJugador = Math.max(3, Math.min(6, fichasPorJugador));
+        this.casillasSegurasPorAla = Math.max(1, Math.min(5, casillasSegurasPorAla));
+        this.numeroSalidaDado = numeroSalidaDado;
+        this.fichas = new ArrayList<>();
+
         setPreferredSize(new Dimension(620, 620));
         setOpaque(false);
+
+        inicializarFichas();
     }
-    
+
+    private void inicializarFichas() {
+        fichas.clear();
+        int idContador = 1;
+        for (int i = 0; i < coloresJugadores.length; i++) {
+            for (int f = 0; f < fichasPorJugador; f++) {
+                FichaVista ficha = new FichaVista(idContador++, i + 1, coloresJugadores[i]);
+                fichas.add(ficha);
+            }
+        }
+    }
+
+    public int getFichasPorJugador() {
+        return fichasPorJugador;
+    }
+
+    public int getCasillasSegurasPorAla() {
+        return casillasSegurasPorAla;
+    }
+
+    public int getNumeroSalidaDado() {
+        return numeroSalidaDado;
+    }
+
     @Override
     protected void paintComponent(Graphics g0) {
         super.paintComponent(g0);
@@ -59,13 +93,17 @@ public class PanelTablero extends JPanel {
         g.setColor(COLOR_MARCO);
         g.setStroke(new BasicStroke((float) Math.max(3, S / 100)));
         g.draw(new Rectangle2D.Double(0, 0, S, S));
+
+        posicionarFichasEnCasa(S, a, pos);
+        dibujarFichas(g);
+
         g.dispose();
     }
  
     private void dibujarBrazo(Graphics2D g, int k, double S, double a, double c) {
         double cw = c / 3.0; 
         double ch = a / 8.0; 
-        Color color = colores[k];
+        Color color = coloresJugadores[k];
         float grosor = (float) Math.max(1, S / 400);
         Font fuente = new Font("SansSerif", Font.PLAIN, Math.max(6, (int) (ch * 0.5)));
  
@@ -76,13 +114,24 @@ public class PanelTablero extends JPanel {
  
                 boolean carril = (j == 1 && r >= 1);
                 boolean salida = (j == 0 && r == 4);
-                g.setColor(carril || salida ? color : Color.WHITE);
+                boolean esSeguraConfigurada = (j == 0 && r >= (8 - casillasSegurasPorAla));
+
+                if (carril || salida) {
+                    g.setColor(color);
+                } else if (esSeguraConfigurada) {
+                    g.setColor(new Color(210, 210, 210));
+                } else {
+                    g.setColor(Color.WHITE);
+                }
+
                 g.fill(new Rectangle2D.Double(x, y, cw, ch));
                 g.setColor(Color.BLACK);
                 g.setStroke(new BasicStroke(grosor));
                 g.draw(new Rectangle2D.Double(x, y, cw, ch));
  
-                if (MOSTRAR_NUMEROS && !carril) {
+                if (salida) {
+                    dibujarNumero(g, "S:" + numeroSalidaDado, x + cw / 2, y + ch / 2, k, fuente);
+                } else if (MOSTRAR_NUMEROS && !carril) {
                     int base = (j == 0) ? 35 + r : (j == 1 ? 34 : 33 - r);
                     int numero = Math.floorMod(base - 17 * k - 1, 68) + 1;
                     dibujarNumero(g, String.valueOf(numero), x + cw / 2, y + ch / 2, k, fuente);
@@ -112,10 +161,10 @@ public class PanelTablero extends JPanel {
         Point2D.Double p4 = new Point2D.Double(a, a + c);
         Point2D.Double ce = new Point2D.Double(m, m);
  
-        triangulo(g, p1, p2, ce, colores[0]); 
-        triangulo(g, p2, p3, ce, colores[1]); 
-        triangulo(g, p3, p4, ce, colores[2]); 
-        triangulo(g, p4, p1, ce, colores[3]); 
+        triangulo(g, p1, p2, ce, coloresJugadores[0]); 
+        triangulo(g, p2, p3, ce, coloresJugadores[1]); 
+        triangulo(g, p3, p4, ce, coloresJugadores[2]); 
+        triangulo(g, p4, p1, ce, coloresJugadores[3]); 
     }
  
     private void triangulo(Graphics2D g, Point2D p, Point2D q, Point2D r, Color color) {
@@ -139,7 +188,7 @@ public class PanelTablero extends JPanel {
         double r = tam * 0.43;
         float grosor = (float) Math.max(1, S / 400);
  
-        g.setColor(colores[indice]);
+        g.setColor(coloresJugadores[indice]);
         g.fill(new Ellipse2D.Double(cx - r, cy - r, 2 * r, 2 * r));
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(grosor));
@@ -160,7 +209,7 @@ public class PanelTablero extends JPanel {
         int n = 0;
         for (int p = 0; p < 8; p++) {
             Color otro;
-            do { otro = colores[n++ % 4]; } while (otro == colores[indice]);
+            do { otro = coloresJugadores[n++ % 4]; } while (otro == coloresJugadores[indice]);
             double ang = Math.toRadians(p * 45 - 90);
             double largo = r3 * (p % 2 == 0 ? 0.9 : 0.65);
             double ancho = r3 * 0.28;
@@ -174,6 +223,51 @@ public class PanelTablero extends JPanel {
         }
     }
 
+    private void posicionarFichasEnCasa(double S, double tamCasa, double[][] posCasas) {
+        double radioFicha = (S / 620.0) * 11;
+        double radioDistribucion = tamCasa * 0.28;
+
+        for (int i = 0; i < 4; i++) {
+            int idJugadorActual = i + 1;
+            double cx = posCasas[i][0] + tamCasa / 2.0;
+            double cy = posCasas[i][1] + tamCasa / 2.0;
+
+            List<FichaVista> fichasEnCasa = new ArrayList<>();
+            for (FichaVista f : fichas) {
+                if (f.getIdJugador() == idJugadorActual && f.getCasillaActual() == -1) {
+                    fichasEnCasa.add(f);
+                }
+            }
+
+            int numFichasCasa = fichasEnCasa.size();
+            for (int k = 0; k < numFichasCasa; k++) {
+                double angulo = Math.toRadians((360.0 / Math.max(1, numFichasCasa)) * k - 90);
+                double fx = cx + Math.cos(angulo) * radioDistribucion;
+                double fy = cy + Math.sin(angulo) * radioDistribucion;
+
+                FichaVista f = fichasEnCasa.get(k);
+                f.setRadio(radioFicha);
+                f.setPosicion(fx, fy);
+            }
+        }
+    }
+
+    private void dibujarFichas(Graphics2D g) {
+        for (FichaVista ficha : fichas) {
+            ficha.dibujar(g);
+        }
+    }
+
     public void actualizarEstadoTablero() {
+    }
+
+    public void moverFicha(int idJugador, int idFicha, int nuevaPosicion) {
+    }
+
+    public void recalcularCoordenadasFichas() {
+    }
+
+    public List<FichaVista> getFichas() {
+        return fichas;
     }
 }
