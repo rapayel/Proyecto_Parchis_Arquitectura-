@@ -22,7 +22,7 @@ import org.presentacion.mvc.ControladorJuego;
 
 /**
  * 
- * @author lagar
+ * @author Equipo
  */
 public class PanelControles extends JPanel {
     private JButton btnLanzarDado;

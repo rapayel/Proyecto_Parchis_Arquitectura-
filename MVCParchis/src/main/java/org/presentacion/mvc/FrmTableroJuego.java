@@ -44,34 +44,30 @@ public class FrmTableroJuego extends JFrame implements Observador {
         this.panelesJugadores = panelesJugadores;
 
         this.setTitle("Juego de Parchís");
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
         PanelFondo panelPrincipal = new PanelFondo("/fondoparchis.png");
-        panelPrincipal.setLayout(new BorderLayout(10, 10));
+        panelPrincipal.setLayout(new BorderLayout(5, 5));
         this.setContentPane(panelPrincipal);
 
-        JPanel panelNorte = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 5));
+        JPanel panelNorte = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
         panelNorte.setOpaque(false);
         if (panelesJugadores.length > 0) panelNorte.add(this.panelesJugadores[0]);
         if (panelesJugadores.length > 1) panelNorte.add(this.panelesJugadores[1]);
 
-        JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 5));
+        JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
         panelSur.setOpaque(false);
         if (panelesJugadores.length > 2) panelSur.add(this.panelesJugadores[2]);
         if (panelesJugadores.length > 3) panelSur.add(this.panelesJugadores[3]);
 
-        JPanel panelEste = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 20));
+        JPanel panelEste = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 10));
         panelEste.setOpaque(false);
-        panelEste.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30));
+        panelEste.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
         panelEste.add(this.panelControles);
 
         panelPrincipal.add(panelNorte, BorderLayout.NORTH);
         panelPrincipal.add(this.panelTablero, BorderLayout.CENTER);
         panelPrincipal.add(panelSur, BorderLayout.SOUTH);
         panelPrincipal.add(panelEste, BorderLayout.EAST);
-
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setLocationRelativeTo(null);
     }
 
     @Override
