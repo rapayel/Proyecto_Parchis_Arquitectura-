@@ -21,12 +21,14 @@ import javax.swing.JPanel;
  * @author Equipo 1
  */
 public class PanelJugador extends JPanel {
+    private int idJugador; 
     private String nombreJugador;
     private BufferedImage avatar;
     private Color colorJugador;
     private boolean esTurnoActivo;
 
-    public PanelJugador(String nombreJugador, BufferedImage avatar, Color colorJugador) {
+    public PanelJugador(int idJugador, String nombreJugador, BufferedImage avatar, Color colorJugador) {
+        this.idJugador = idJugador;
         this.nombreJugador = nombreJugador;
         this.avatar = avatar;
         this.colorJugador = colorJugador != null ? colorJugador : new Color(70, 130, 180);
@@ -34,6 +36,10 @@ public class PanelJugador extends JPanel {
 
         setOpaque(false);
         setPreferredSize(new Dimension(240, 80));
+    }
+
+    public int getIdJugador() {
+        return idJugador;
     }
 
     public void setNombreJugador(String nombreJugador) {

@@ -6,9 +6,12 @@ package org.presentacion.mvc.paneles;
 
 import javax.swing.JPanel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.presentacion.mvc.ControladorJuego;
 
 /**
  * 
@@ -24,6 +27,8 @@ public class PanelTablero extends JPanel {
     private final int numeroSalidaDado;
 
     private List<FichaVista> fichas;
+    private ControladorJuego controlador;
+    private int idJugadorHumano = 1;
 
     public PanelTablero(Color[] coloresJugadores, int fichasPorJugador, int casillasSegurasPorAla, int numeroSalidaDado) {
         this.coloresJugadores = coloresJugadores;
@@ -36,29 +41,54 @@ public class PanelTablero extends JPanel {
         setOpaque(false);
 
         inicializarFichas();
+        configurarInteraccionRaton();
+    }
+
+    public void setControlador(ControladorJuego controlador) {
+        this.controlador = controlador;
     }
 
     private void inicializarFichas() {
         fichas.clear();
-        int idContador = 1;
         for (int i = 0; i < coloresJugadores.length; i++) {
-            for (int f = 0; f < fichasPorJugador; f++) {
-                FichaVista ficha = new FichaVista(idContador++, i + 1, coloresJugadores[i]);
+            int idJugador = i + 1;
+            int baseFichaId = idJugador * 10; 
+            for (int f = 1; f <= fichasPorJugador; f++) {
+                int idFicha = baseFichaId + f;
+                FichaVista ficha = new FichaVista(idFicha, idJugador, coloresJugadores[i]);
                 fichas.add(ficha);
             }
         }
     }
 
-    public int getFichasPorJugador() {
-        return fichasPorJugador;
+    private void configurarInteraccionRaton() {
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (controlador == null) return;
+
+                Point p = e.getPoint();
+                for (FichaVista f : fichas) {
+                    if (f.getIdJugador() == idJugadorHumano) {
+                        double dist = Math.hypot(p.x - f.getX(), p.y - f.getY());
+                        if (dist <= f.getRadio()) {
+                            controlador.seleccionarFicha(idJugadorHumano, f.getIdFicha());
+                            break;
+                        }
+                    }
+                }
+            }
+        });
     }
 
-    public int getCasillasSegurasPorAla() {
-        return casillasSegurasPorAla;
-    }
-
-    public int getNumeroSalidaDado() {
-        return numeroSalidaDado;
+    public void moverFicha(int idJugador, int idFicha, int nuevaPosicion) {
+        for (FichaVista f : fichas) {
+            if (f.getIdJugador() == idJugador && f.getIdFicha() == idFicha) {
+                f.setCasillaActual(nuevaPosicion);
+                break;
+            }
+        }
+        repaint();
     }
 
     @Override
@@ -256,15 +286,6 @@ public class PanelTablero extends JPanel {
         for (FichaVista ficha : fichas) {
             ficha.dibujar(g);
         }
-    }
-
-    public void actualizarEstadoTablero() {
-    }
-
-    public void moverFicha(int idJugador, int idFicha, int nuevaPosicion) {
-    }
-
-    public void recalcularCoordenadasFichas() {
     }
 
     public List<FichaVista> getFichas() {

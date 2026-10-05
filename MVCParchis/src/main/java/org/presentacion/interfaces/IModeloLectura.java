@@ -12,6 +12,7 @@ public interface IModeloLectura {
     void registrarObservador(Observador o);
     void removerObservador(Observador o);
     void notificarObservadores();
+    
     int getValorDado();
     boolean puedeVolverATirar();
     boolean puedeSacarFicha();
@@ -22,4 +23,7 @@ public interface IModeloLectura {
     boolean isCapturo();
     boolean isLlegoAMeta();
     boolean isCambioTurno();
+
+    int getIdJugadorTurnoActual();
+    boolean isDadoLanzadoEnTurno();
 }

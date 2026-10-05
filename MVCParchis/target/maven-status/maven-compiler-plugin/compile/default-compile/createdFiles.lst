@@ -6,6 +6,7 @@ org\presentacion\mvc\FrmTableroJuego.class
 org\presentacion\mvc\MainJuego.class
 org\presentacion\interfaces\IModeloJuego.class
 org\presentacion\mvc\ControladorJuego.class
+org\presentacion\mvc\paneles\PanelTablero$1.class
 org\presentacion\interfaces\Observador.class
 org\presentacion\interfaces\IModeloLectura.class
 org\presentacion\mvc\paneles\PanelControles.class

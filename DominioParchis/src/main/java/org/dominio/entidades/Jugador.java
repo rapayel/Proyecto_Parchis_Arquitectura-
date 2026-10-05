@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 
- * @author lagar
+ * @author Equipo 1
  */
 public class Jugador {
     private int id;
@@ -39,12 +39,22 @@ public class Jugador {
         if (ficha == null) {
             throw new IllegalArgumentException("La ficha no puede ser nula.");
         }
+        ficha.setJugador(this);
         this.fichas.add(ficha);
     }
 
     public Ficha obtenerFicha(int idFicha) {
         for (Ficha ficha : fichas) {
             if (ficha.getId() == idFicha) {
+                return ficha;
+            }
+        }
+        return null;
+    }
+
+    public Ficha obtenerFichaEnJuegoDistintaDe(Ficha fichaExcluida) {
+        for (Ficha ficha : fichas) {
+            if (ficha.estaEnJuego() && ficha != fichaExcluida) {
                 return ficha;
             }
         }
@@ -76,15 +86,6 @@ public class Jugador {
             }
         }
         return true;
-    }
-
-    public void moverFichaAdicionalPremio(Ficha fichaExcluida, int pasos, int limiteMeta) {
-        for (Ficha otraFicha : fichas) {
-            if (otraFicha.estaEnJuego() && otraFicha != fichaExcluida) {
-                otraFicha.avanzarORebotar(pasos, limiteMeta);
-                break;
-            }
-        }
     }
 
     public int getId() {

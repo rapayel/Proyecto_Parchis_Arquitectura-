@@ -6,7 +6,7 @@ package org.dominio.entidades;
 
 /**
  * 
- * @author lagar
+ * @author Equipo 1
  */
 public class Ficha {
     private int id;
@@ -73,6 +73,10 @@ public class Ficha {
 
     public Jugador getJugador() {
         return jugador;
+    }
+
+    public void setJugador(Jugador jugador) {
+        this.jugador = jugador;
     }
 
     public int getPosicion() {

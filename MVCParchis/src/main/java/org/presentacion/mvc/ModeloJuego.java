@@ -19,6 +19,8 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
     private IFachadaJuego fachadaJuego;
     private ResultadoLanzarDadoDTO ultimoResultadoDado;
     private ResultadoSeleccionarFichaDTO ultimoResultadoFicha;
+    private int idJugadorTurnoActual = 1;
+    private boolean dadoLanzadoEnTurno = false;
     
     public ModeloJuego(IFachadaJuego fachadaJuego) {
         this.observadores = new ArrayList<>();
@@ -45,12 +47,24 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
     @Override
     public void solicitarLanzarDado(int idJugador) {
         this.ultimoResultadoDado = fachadaJuego.lanzarDado(new LanzarDadoDTO(idJugador));
+        this.dadoLanzadoEnTurno = true;
+        
+        if (!ultimoResultadoDado.isTieneMovimientoValido()) {
+            this.dadoLanzadoEnTurno = false;
+        }
         notificarObservadores();
     }
 
     @Override
     public void solicitarSeleccionarFicha(int idJugador, int idFicha) {
         this.ultimoResultadoFicha = fachadaJuego.seleccionarFicha(new SeleccionarFichaDTO(idJugador, idFicha));
+        
+        if (ultimoResultadoFicha.isCambioTurno()) {
+            this.dadoLanzadoEnTurno = false;
+        } else {
+            this.dadoLanzadoEnTurno = false;
+        }
+        
         notificarObservadores();
     }
     
@@ -97,5 +111,19 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
     @Override
     public boolean isCambioTurno() {
         return ultimoResultadoFicha != null && ultimoResultadoFicha.isCambioTurno();
+    }
+
+    @Override
+    public int getIdJugadorTurnoActual() {
+        return idJugadorTurnoActual;
+    }
+
+    public void setIdJugadorTurnoActual(int idJugadorTurnoActual) {
+        this.idJugadorTurnoActual = idJugadorTurnoActual;
+    }
+
+    @Override
+    public boolean isDadoLanzadoEnTurno() {
+        return dadoLanzadoEnTurno;
     }
 }

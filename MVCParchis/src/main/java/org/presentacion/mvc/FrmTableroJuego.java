@@ -28,6 +28,7 @@ public class FrmTableroJuego extends JFrame implements Observador {
     private PanelTablero panelTablero;
     private PanelControles panelControles;
     private PanelJugador[] panelesJugadores;
+    private final int idJugadorHumano = 1;
 
     public FrmTableroJuego(
             ControladorJuego controlador, 
@@ -37,13 +38,16 @@ public class FrmTableroJuego extends JFrame implements Observador {
             PanelJugador[] panelesJugadores) {
 
         this.controlador = controlador;
-        modelo.registrarObservador(this);
-
         this.panelTablero = panelTablero;
         this.panelControles = panelControles;
         this.panelesJugadores = panelesJugadores;
 
-        this.setTitle("Juego de Parchís");
+        this.panelTablero.setControlador(controlador);
+        this.panelControles.setIdJugadorPropietario(idJugadorHumano);
+
+        modelo.registrarObservador(this);
+
+        this.setTitle("Juego de Parchís - Jugador 1");
         
         PanelFondo panelPrincipal = new PanelFondo("/fondoparchis.png");
         panelPrincipal.setLayout(new BorderLayout(5, 5));
@@ -68,6 +72,8 @@ public class FrmTableroJuego extends JFrame implements Observador {
         panelPrincipal.add(this.panelTablero, BorderLayout.CENTER);
         panelPrincipal.add(panelSur, BorderLayout.SOUTH);
         panelPrincipal.add(panelEste, BorderLayout.EAST);
+
+        actualizarVistaPrivado(modelo);
     }
 
     @Override
@@ -76,6 +82,24 @@ public class FrmTableroJuego extends JFrame implements Observador {
     }
 
     private void actualizarVistaPrivado(IModeloLectura modelo) {
+        int turnoActual = modelo.getIdJugadorTurnoActual();
+        for (PanelJugador pj : panelesJugadores) {
+            pj.setEsTurnoActivo(pj.getIdJugador() == turnoActual);
+        }
+        int valorDado = modelo.getValorDado();
+        if (valorDado >= 1 && valorDado <= 6) {
+            panelControles.setCaraDado(valorDado);
+        }
+        boolean esTurnoJugadorHumano = (turnoActual == idJugadorHumano);
+        boolean puedeLanzar = esTurnoJugadorHumano && !modelo.isDadoLanzadoEnTurno();
+        panelControles.setHabilitarBotonLanzar(puedeLanzar);
+        if (modelo.getIdFichaSeleccionada() != -1) {
+            panelTablero.moverFicha(
+                turnoActual, 
+                modelo.getIdFichaSeleccionada(), 
+                modelo.getPosicionFicha()
+            );
+        }
     }
 
     private class PanelFondo extends JPanel {

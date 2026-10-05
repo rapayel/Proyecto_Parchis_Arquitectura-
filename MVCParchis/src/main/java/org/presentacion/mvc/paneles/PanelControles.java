@@ -30,9 +30,11 @@ public class PanelControles extends JPanel {
     private ComponenteDado componenteDado;
     private Timer timerAnimacion;
     private Random random;
+    private int idJugadorPropietario; 
 
-    public PanelControles(ControladorJuego controlador) {
+    public PanelControles(ControladorJuego controlador, int idJugadorPropietario) {
         this.controlador = controlador;
+        this.idJugadorPropietario = idJugadorPropietario;
         this.random = new Random();
 
         setLayout(new BorderLayout(15, 15));
@@ -91,15 +93,19 @@ public class PanelControles extends JPanel {
         this.add(panelBoton, BorderLayout.SOUTH);
     }
 
+    public void setIdJugadorPropietario(int idJugadorPropietario) {
+        this.idJugadorPropietario = idJugadorPropietario;
+    }
+
     private void iniciarAnimacionYLanzar() {
         btnLanzarDado.setEnabled(false);
         timerAnimacion.start();
 
-        Timer timerDetener = new Timer(2000, e -> {
+        Timer timerDetener = new Timer(1500, e -> {
             timerAnimacion.stop();
 
-            int idJugadorPrueba = 1;
-            this.controlador.lanzarDado(idJugadorPrueba);
+            // Llama al controlador con el ID correspondiente de este panel
+            this.controlador.lanzarDado(this.idJugadorPropietario);
 
             btnLanzarDado.setEnabled(true);
         });

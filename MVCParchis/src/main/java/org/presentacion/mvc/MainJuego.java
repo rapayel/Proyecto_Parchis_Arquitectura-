@@ -7,9 +7,14 @@ package org.presentacion.mvc;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import org.dominio.entidades.Ficha;
+import org.dominio.entidades.Jugador;
+import org.dominio.entidades.Tablero;
 import org.dominio.fachada.FachadaJuego;
 import org.dominio.fachada.IFachadaJuego;
 import org.presentacion.mvc.paneles.PanelControles;
@@ -28,13 +33,27 @@ public class MainJuego {
             int casillasSegurasPorAla = 1;
             int numeroSalidaDado = 5;
 
-            Color colorJ1 = new Color(0x795548); 
-            Color colorJ2 = new Color(0x78909C); 
-            Color colorJ3 = new Color(0x8E24AA); 
-            Color colorJ4 = new Color(0xEC407A); 
+            Color colorJ1 = new Color(0x795548);
+            Color colorJ2 = new Color(0x78909C);
+            Color colorJ3 = new Color(0x8E24AA);
+            Color colorJ4 = new Color(0xEC407A);
+
             Color[] coloresJugadores = {colorJ1, colorJ2, colorJ3, colorJ4};
 
-            IFachadaJuego fachadaJuego = new FachadaJuego(null);
+            List<Jugador> listaJugadoresDominio = new ArrayList<>();
+            for (int idx = 1; idx <= 4; idx++) {
+                List<Ficha> fichasJugador = new ArrayList<>();
+                int baseFichaId = idx * 10;
+                for (int i = 1; i <= fichasPorJugador; i++) {
+                    fichasJugador.add(new Ficha(baseFichaId + i, null));
+                }
+                Jugador jugador = new Jugador(idx, "Jugador " + idx, "Avatar" + idx, fichasJugador);
+                listaJugadoresDominio.add(jugador);
+            }
+
+            Tablero tablero = new Tablero(listaJugadoresDominio, numeroSalidaDado, casillasSegurasPorAla);
+            IFachadaJuego fachadaJuego = new FachadaJuego(tablero);
+
             ModeloJuego modeloJuego = new ModeloJuego(fachadaJuego);
             ControladorJuego controladorJuego = new ControladorJuego(modeloJuego);
 
@@ -42,14 +61,16 @@ public class MainJuego {
             BufferedImage avatar2 = cargarImagen("/avatar2.jpg");
             BufferedImage avatar3 = cargarImagen("/avatar3.jpg");
             BufferedImage avatar4 = cargarImagen("/avatar4.jpg");
-            
-            PanelTablero panelTablero = new PanelTablero(coloresJugadores, fichasPorJugador, casillasSegurasPorAla, numeroSalidaDado);
-            PanelControles panelControles = new PanelControles(controladorJuego);
 
-            PanelJugador panelJ1 = new PanelJugador("Jugador 1", avatar1, colorJ1);
-            PanelJugador panelJ2 = new PanelJugador("Jugador 2", avatar2, colorJ2);
-            PanelJugador panelJ3 = new PanelJugador("Jugador 3", avatar3, colorJ3);
-            PanelJugador panelJ4 = new PanelJugador("Jugador 4", avatar4, colorJ4);
+            int idJugadorVentana = 1;
+
+            PanelControles panelControles = new PanelControles(controladorJuego, idJugadorVentana);
+            PanelTablero panelTablero = new PanelTablero(coloresJugadores, fichasPorJugador, casillasSegurasPorAla, numeroSalidaDado);
+
+            PanelJugador panelJ1 = new PanelJugador(1, "Jugador 1", avatar1, colorJ1);
+            PanelJugador panelJ2 = new PanelJugador(2, "Jugador 2", avatar2, colorJ2);
+            PanelJugador panelJ3 = new PanelJugador(3, "Jugador 3", avatar3, colorJ3);
+            PanelJugador panelJ4 = new PanelJugador(4, "Jugador 4", avatar4, colorJ4);
 
             PanelJugador[] panelesJugadores = {panelJ1, panelJ2, panelJ3, panelJ4};
 
@@ -61,9 +82,9 @@ public class MainJuego {
                     panelesJugadores
             );
 
-            ventana.setTitle("Juego de Parchís");
+            ventana.setTitle("Juego de Parchís - Jugador " + idJugadorVentana);
             ventana.setSize(1000, 750);
-            ventana.setLocationRelativeTo(null); 
+            ventana.setLocationRelativeTo(null);
             ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             ventana.setVisible(true);
         });

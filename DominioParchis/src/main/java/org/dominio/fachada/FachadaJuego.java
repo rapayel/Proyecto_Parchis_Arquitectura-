@@ -23,11 +23,28 @@ public class FachadaJuego implements IFachadaJuego {
 
     @Override
     public ResultadoLanzarDadoDTO lanzarDado(LanzarDadoDTO dto) {
-        return tablero.lanzarDado(dto);
+        Tablero.ResultadoLanzarDadoDominio res = tablero.lanzarDado(dto.getIdJugador());
+        
+        return new ResultadoLanzarDadoDTO(
+                res.idJugador(),
+                res.resultadoDado(),
+                res.puedeVolverATirar(),
+                res.puedeSacarFicha(),
+                res.tieneMovimientoValido()
+        );
     }
 
     @Override
     public ResultadoSeleccionarFichaDTO seleccionarFicha(SeleccionarFichaDTO dto) {
-        return tablero.seleccionarFicha(dto);
+        Tablero.ResultadoSeleccionarFichaDominio res = tablero.seleccionarFicha(dto.getIdJugador(), dto.getIdFicha());
+        
+        return new ResultadoSeleccionarFichaDTO(
+                res.idJugador(),
+                res.idFicha(),
+                res.posicionFicha(),
+                res.capturo(),
+                res.llegoAMeta(),
+                res.cambioTurno()
+        );
     }
 }

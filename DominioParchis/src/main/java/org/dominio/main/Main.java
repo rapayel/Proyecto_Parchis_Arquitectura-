@@ -20,15 +20,18 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         List<Jugador> listaJugadores = new ArrayList<>();
+
         for (int idx = 1; idx <= 4; idx++) {
             List<Ficha> fichasJugador = new ArrayList<>();
             int baseFichaId = idx * 10;
             for (int i = 1; i <= 4; i++) {
                 fichasJugador.add(new Ficha(baseFichaId + i, null));
             }
+            
             Jugador jugador = new Jugador(idx, "Jugador " + idx, "Avatar" + idx, fichasJugador);
             listaJugadores.add(jugador);
         }
+
         int numParaSalir = 5;
         int casillasSeguras = 2;
         Tablero tablero = new Tablero(listaJugadores, numParaSalir, casillasSeguras);
@@ -86,8 +89,14 @@ public class Main {
 
                         seleccionValida = true;
 
+                        if (jugadorActual.todasLlegaronAMeta()) {
+                            System.out.println("\n ¡EL JUGADOR " + jugadorActual.getNombre() + " HA GANADO LA PARTIDA!");
+                            juegoActivo = false;
+                            break;
+                        }
+
                         if (!resMover.isCambioTurno()) {
-                            System.out.println("\n¡Repites turno por sacarle 6!");
+                            System.out.println("\n¡Repites turno por sacar 6!");
                         }
 
                     } catch (IllegalStateException | IllegalArgumentException e) {
