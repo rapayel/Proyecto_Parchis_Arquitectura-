@@ -83,16 +83,20 @@ public class FrmTableroJuego extends JFrame implements Observador {
 
     private void actualizarVistaPrivado(IModeloLectura modelo) {
         int turnoActual = modelo.getIdJugadorTurnoActual();
+
         for (PanelJugador pj : panelesJugadores) {
             pj.setEsTurnoActivo(pj.getIdJugador() == turnoActual);
         }
+
         int valorDado = modelo.getValorDado();
         if (valorDado >= 1 && valorDado <= 6) {
             panelControles.setCaraDado(valorDado);
         }
+        
         boolean esTurnoJugadorHumano = (turnoActual == idJugadorHumano);
         boolean puedeLanzar = esTurnoJugadorHumano && !modelo.isDadoLanzadoEnTurno();
         panelControles.setHabilitarBotonLanzar(puedeLanzar);
+
         if (modelo.getIdFichaSeleccionada() != -1) {
             panelTablero.moverFicha(
                 turnoActual, 

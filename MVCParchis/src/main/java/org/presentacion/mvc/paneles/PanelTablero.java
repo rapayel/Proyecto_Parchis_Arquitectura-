@@ -104,9 +104,10 @@ public class PanelTablero extends JPanel {
  
         double c = S * 0.33;        
         double a = (S - c) / 2.0;   
-        double[][] pos = {{0, 0}, {S - a, 0}, {S - a, S - a}, {0, S - a}};
+        double[][] posCasas = {{0, 0}, {S - a, 0}, {S - a, S - a}, {0, S - a}};
+
         for (int i = 0; i < 4; i++) {
-            dibujarCasa(g, pos[i][0], pos[i][1], a, i, S);
+            dibujarCasa(g, posCasas[i][0], posCasas[i][1], a, i, S);
         }
 
         for (int k = 0; k < 4; k++) {
@@ -124,12 +125,79 @@ public class PanelTablero extends JPanel {
         g.setStroke(new BasicStroke((float) Math.max(3, S / 100)));
         g.draw(new Rectangle2D.Double(0, 0, S, S));
 
-        posicionarFichasEnCasa(S, a, pos);
+        actualizarCoordenadasFichas(S, a, c, posCasas);
         dibujarFichas(g);
 
         g.dispose();
     }
- 
+
+    private void actualizarCoordenadasFichas(double S, double tamCasa, double c, double[][] posCasas) {
+        double radioFicha = (S / 620.0) * 11;
+        double radioDistribucion = tamCasa * 0.28;
+
+        for (FichaVista f : fichas) {
+            f.setRadio(radioFicha);
+            int pos = f.getCasillaActual();
+
+            if (pos == -1) { 
+                int idxJugador = f.getIdJugador() - 1;
+                double cx = posCasas[idxJugador][0] + tamCasa / 2.0;
+                double cy = posCasas[idxJugador][1] + tamCasa / 2.0;
+
+                List<FichaVista> enCasa = obtenerFichasEnCasa(f.getIdJugador());
+                int orden = enCasa.indexOf(f);
+                int totalEnCasa = Math.max(1, enCasa.size());
+
+                double angulo = Math.toRadians((360.0 / totalEnCasa) * orden - 90);
+                f.setPosicion(cx + Math.cos(angulo) * radioDistribucion, cy + Math.sin(angulo) * radioDistribucion);
+            } else { // Ficha sobre el tablero
+                Point2D coord = calcularCoordenadaCasilla(pos, S, tamCasa, c);
+                if (coord != null) {
+                    f.setPosicion(coord.getX(), coord.getY());
+                }
+            }
+        }
+    }
+
+    private List<FichaVista> obtenerFichasEnCasa(int idJugador) {
+        List<FichaVista> lista = new ArrayList<>();
+        for (FichaVista f : fichas) {
+            if (f.getIdJugador() == idJugador && f.getCasillaActual() == -1) {
+                lista.add(f);
+            }
+        }
+        return lista;
+    }
+
+    private Point2D calcularCoordenadaCasilla(int casilla, double S, double a, double c) {
+        double cw = c / 3.0;
+        double ch = a / 8.0;
+        for (int k = 0; k < 4; k++) {
+            for (int r = 0; r < 8; r++) {
+                for (int j = 0; j < 3; j++) {
+                    if (j == 1) continue; 
+
+                    int base = (j == 0) ? 35 + r : 33 - r;
+                    int numCasilla = Math.floorMod(base - 17 * k - 1, 68) + 1;
+
+                    if (numCasilla == casilla) {
+                        double localX = a + j * cw + cw / 2.0;
+                        double localY = r * ch + ch / 2.0;
+                        double cx = S / 2.0;
+                        double cy = S / 2.0;
+                        double rad = k * Math.PI / 2.0;
+
+                        double rx = cx + (localX - cx) * Math.cos(rad) - (localY - cy) * Math.sin(rad);
+                        double ry = cy + (localX - cx) * Math.sin(rad) + (localY - cy) * Math.cos(rad);
+
+                        return new Point2D.Double(rx, ry);
+                    }
+                }
+            }
+        }
+        return new Point2D.Double(S / 2.0, S / 2.0); 
+    }
+
     private void dibujarBrazo(Graphics2D g, int k, double S, double a, double c) {
         double cw = c / 3.0; 
         double ch = a / 8.0; 
@@ -250,35 +318,6 @@ public class PanelTablero extends JPanel {
             petalo.closePath();
             g.setColor(otro);
             g.fill(petalo);
-        }
-    }
-
-    private void posicionarFichasEnCasa(double S, double tamCasa, double[][] posCasas) {
-        double radioFicha = (S / 620.0) * 11;
-        double radioDistribucion = tamCasa * 0.28;
-
-        for (int i = 0; i < 4; i++) {
-            int idJugadorActual = i + 1;
-            double cx = posCasas[i][0] + tamCasa / 2.0;
-            double cy = posCasas[i][1] + tamCasa / 2.0;
-
-            List<FichaVista> fichasEnCasa = new ArrayList<>();
-            for (FichaVista f : fichas) {
-                if (f.getIdJugador() == idJugadorActual && f.getCasillaActual() == -1) {
-                    fichasEnCasa.add(f);
-                }
-            }
-
-            int numFichasCasa = fichasEnCasa.size();
-            for (int k = 0; k < numFichasCasa; k++) {
-                double angulo = Math.toRadians((360.0 / Math.max(1, numFichasCasa)) * k - 90);
-                double fx = cx + Math.cos(angulo) * radioDistribucion;
-                double fy = cy + Math.sin(angulo) * radioDistribucion;
-
-                FichaVista f = fichasEnCasa.get(k);
-                f.setRadio(radioFicha);
-                f.setPosicion(fx, fy);
-            }
         }
     }
 

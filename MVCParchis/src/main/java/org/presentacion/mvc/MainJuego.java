@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -87,9 +88,80 @@ public class MainJuego {
             ventana.setLocationRelativeTo(null);
             ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             ventana.setVisible(true);
+
+            iniciarConsolaControladores(controladorJuego, modeloJuego);
         });
     }
-    
+
+    private static void iniciarConsolaControladores(ControladorJuego controlador, ModeloJuego modelo) {
+        Thread hiloConsola = new Thread(() -> {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("\n=== TERMINAL DE PARCHÍS ACTIVA (JUGADORES 2, 3 Y 4) ===");
+
+            while (true) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    break;
+                }
+
+                int turnoActual = modelo.getIdJugadorTurnoActual();
+
+                if (turnoActual != 1) {
+                    System.out.println("\n--------------------------------------------------");
+                    System.out.println(">>> TURNO DE JUGADOR " + turnoActual + " (TERMINAL) <<<");
+                    System.out.println("Presiona ENTER para lanzar el dado...");
+                    scanner.nextLine();
+
+                    SwingUtilities.invokeLater(() -> controlador.lanzarDado(turnoActual));
+
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+
+                    if (!modelo.isDadoLanzadoEnTurno()) {
+                        System.out.println("[!] No tienes movimientos válidos o perdiste el turno.");
+                        continue;
+                    }
+
+                    System.out.println("Dado obtenido: " + modelo.getValorDado());
+
+                    boolean jugadaRealizada = false;
+                    while (!jugadaRealizada) {
+                        System.out.print("Ingresa el ID de la ficha a mover: ");
+                        if (!scanner.hasNextInt()) {
+                            System.out.println("Ingresa un ID válido.");
+                            scanner.next();
+                            continue;
+                        }
+
+                        int idFicha = scanner.nextInt();
+                        scanner.nextLine();
+
+                        try {
+                            final boolean[] exito = {true};
+                            SwingUtilities.invokeAndWait(() -> {
+                                try {
+                                    controlador.seleccionarFicha(turnoActual, idFicha);
+                                } catch (Exception ex) {
+                                    System.out.println("Error en la jugada: " + ex.getMessage());
+                                    exito[0] = false;
+                                }
+                            });
+                            jugadaRealizada = exito[0];
+                        } catch (Exception ex) {
+                            System.out.println("Error al procesar la jugada.");
+                        }
+                    }
+                }
+            }
+        });
+        hiloConsola.setDaemon(true);
+        hiloConsola.start();
+    }
+
     private static BufferedImage cargarImagen(String ruta) {
         try {
             return ImageIO.read(MainJuego.class.getResource(ruta));

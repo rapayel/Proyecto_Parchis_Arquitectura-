@@ -47,10 +47,12 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
     @Override
     public void solicitarLanzarDado(int idJugador) {
         this.ultimoResultadoDado = fachadaJuego.lanzarDado(new LanzarDadoDTO(idJugador));
-        this.dadoLanzadoEnTurno = true;
         
-        if (!ultimoResultadoDado.isTieneMovimientoValido()) {
-            this.dadoLanzadoEnTurno = false;
+        if (ultimoResultadoDado != null) {
+            this.dadoLanzadoEnTurno = ultimoResultadoDado.isTieneMovimientoValido();
+            if (!this.dadoLanzadoEnTurno) {
+                this.idJugadorTurnoActual = (this.idJugadorTurnoActual % 4) + 1;
+            }
         }
         notificarObservadores();
     }
@@ -59,10 +61,11 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
     public void solicitarSeleccionarFicha(int idJugador, int idFicha) {
         this.ultimoResultadoFicha = fachadaJuego.seleccionarFicha(new SeleccionarFichaDTO(idJugador, idFicha));
         
-        if (ultimoResultadoFicha.isCambioTurno()) {
+        if (ultimoResultadoFicha != null) {
             this.dadoLanzadoEnTurno = false;
-        } else {
-            this.dadoLanzadoEnTurno = false;
+            if (ultimoResultadoFicha.isCambioTurno()) {
+                this.idJugadorTurnoActual = (this.idJugadorTurnoActual % 4) + 1;
+            }
         }
         
         notificarObservadores();
@@ -116,10 +119,6 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
     @Override
     public int getIdJugadorTurnoActual() {
         return idJugadorTurnoActual;
-    }
-
-    public void setIdJugadorTurnoActual(int idJugadorTurnoActual) {
-        this.idJugadorTurnoActual = idJugadorTurnoActual;
     }
 
     @Override
