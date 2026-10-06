@@ -14,34 +14,30 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
-import java.util.Random;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 import org.presentacion.mvc.ControladorJuego;
 
 /**
  * 
- * @author Equipo
+ * @author Equipo 1
  */
 public class PanelControles extends JPanel {
     private JButton btnLanzarDado;
     private ControladorJuego controlador;
     private ComponenteDado componenteDado;
-    private Timer timerAnimacion;
-    private Random random;
     private int idJugadorPropietario; 
 
     public PanelControles(ControladorJuego controlador, int idJugadorPropietario) {
         this.controlador = controlador;
         this.idJugadorPropietario = idJugadorPropietario;
-        this.random = new Random();
 
         setLayout(new BorderLayout(15, 15));
         setOpaque(false);
 
         componenteDado = new ComponenteDado();
         this.add(componenteDado, BorderLayout.CENTER);
+
         btnLanzarDado = new JButton("Lanzar Dado") {
             @Override
             protected void paintComponent(Graphics g) {
@@ -77,13 +73,10 @@ public class PanelControles extends JPanel {
         btnLanzarDado.setFocusPainted(false);
         btnLanzarDado.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        timerAnimacion = new Timer(80, e -> {
-            int caraAleatoria = random.nextInt(6) + 1;
-            componenteDado.setCara(caraAleatoria);
-        });
-
         btnLanzarDado.addActionListener(e -> {
-            iniciarAnimacionYLanzar();
+            if (this.controlador != null) {
+                this.controlador.lanzarDado(this.idJugadorPropietario);
+            }
         });
 
         JPanel panelBoton = new JPanel();
@@ -97,23 +90,6 @@ public class PanelControles extends JPanel {
         this.idJugadorPropietario = idJugadorPropietario;
     }
 
-    private void iniciarAnimacionYLanzar() {
-        btnLanzarDado.setEnabled(false);
-        timerAnimacion.start();
-
-        Timer timerDetener = new Timer(1500, e -> {
-            timerAnimacion.stop();
-
-            // Llama al controlador con el ID correspondiente de este panel
-            this.controlador.lanzarDado(this.idJugadorPropietario);
-
-            btnLanzarDado.setEnabled(true);
-        });
-        
-        timerDetener.setRepeats(false);
-        timerDetener.start();
-    }
-
     public void setHabilitarBotonLanzar(boolean habilitar) {
         btnLanzarDado.setEnabled(habilitar);
     }
@@ -123,7 +99,6 @@ public class PanelControles extends JPanel {
     }
 
     private class ComponenteDado extends JPanel {
-
         private int caraActual = 1;
 
         public ComponenteDado() {
@@ -142,7 +117,6 @@ public class PanelControles extends JPanel {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g.create();
-
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             int ancho = getWidth();
@@ -209,7 +183,6 @@ public class PanelControles extends JPanel {
                     dibujarPunto(g2, xDer, yInf, radioPunto);
                 }
             }
-
             g2.dispose();
         }
 

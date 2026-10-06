@@ -30,6 +30,11 @@ public class PanelTablero extends JPanel {
     private ControladorJuego controlador;
     private int idJugadorHumano = 1;
 
+    // NUEVO: desplazamiento con el que se dibuja el tablero dentro del panel.
+    // Las coordenadas de las fichas son relativas al tablero, no al panel.
+    private double offsetX = 0;
+    private double offsetY = 0;
+
     public PanelTablero(Color[] coloresJugadores, int fichasPorJugador, int casillasSegurasPorAla, int numeroSalidaDado) {
         this.coloresJugadores = coloresJugadores;
         this.fichasPorJugador = Math.max(3, Math.min(6, fichasPorJugador));
@@ -67,12 +72,20 @@ public class PanelTablero extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (controlador == null) return;
 
-                Point p = e.getPoint();
+                // CORREGIDO: el clic llega en coordenadas del panel, pero las fichas
+                // están en coordenadas del tablero (trasladado en paintComponent).
+                double mx = e.getX() - offsetX;
+                double my = e.getY() - offsetY;
+
                 for (FichaVista f : fichas) {
                     if (f.getIdJugador() == idJugadorHumano) {
-                        double dist = Math.hypot(p.x - f.getX(), p.y - f.getY());
-                        if (dist <= f.getRadio()) {
-                            controlador.seleccionarFicha(idJugadorHumano, f.getIdFicha());
+                        double dist = Math.hypot(mx - f.getX(), my - f.getY());
+                        if (dist <= f.getRadio() + 4) { // pequeña tolerancia para facilitar el clic
+                            try {
+                                controlador.seleccionarFicha(idJugadorHumano, f.getIdFicha());
+                            } catch (Exception ex) {
+                                System.out.println("Jugada no válida: " + ex.getMessage());
+                            }
                             break;
                         }
                     }
@@ -91,6 +104,18 @@ public class PanelTablero extends JPanel {
         repaint();
     }
 
+    /**
+     * NUEVO: numeración de casillas en sentido horario.
+     * La salida (S:5) de cada jugador queda en 1, 18, 35 y 52 (k = 0..3),
+     * igual que en el dominio.
+     *
+     * @param base valor base de la casilla en el brazo 0 (35 + r, 34 o 33 - r)
+     * @param k    índice del brazo (0 a 3)
+     */
+    private int numeroCasilla(int base, int k) {
+        return Math.floorMod(39 - base + 17 * k, 68) + 1;
+    }
+
     @Override
     protected void paintComponent(Graphics g0) {
         super.paintComponent(g0);
@@ -100,7 +125,9 @@ public class PanelTablero extends JPanel {
         g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
  
         double S = Math.min(getWidth(), getHeight()) - 20; 
-        g.translate((getWidth() - S) / 2.0, (getHeight() - S) / 2.0);
+        offsetX = (getWidth() - S) / 2.0;   // NUEVO
+        offsetY = (getHeight() - S) / 2.0;  // NUEVO
+        g.translate(offsetX, offsetY);
  
         double c = S * 0.33;        
         double a = (S - c) / 2.0;   
@@ -139,7 +166,7 @@ public class PanelTablero extends JPanel {
             f.setRadio(radioFicha);
             int pos = f.getCasillaActual();
 
-            if (pos == -1) { 
+            if (pos <= 0) { 
                 int idxJugador = f.getIdJugador() - 1;
                 double cx = posCasas[idxJugador][0] + tamCasa / 2.0;
                 double cy = posCasas[idxJugador][1] + tamCasa / 2.0;
@@ -150,7 +177,7 @@ public class PanelTablero extends JPanel {
 
                 double angulo = Math.toRadians((360.0 / totalEnCasa) * orden - 90);
                 f.setPosicion(cx + Math.cos(angulo) * radioDistribucion, cy + Math.sin(angulo) * radioDistribucion);
-            } else { // Ficha sobre el tablero
+            } else { 
                 Point2D coord = calcularCoordenadaCasilla(pos, S, tamCasa, c);
                 if (coord != null) {
                     f.setPosicion(coord.getX(), coord.getY());
@@ -162,7 +189,7 @@ public class PanelTablero extends JPanel {
     private List<FichaVista> obtenerFichasEnCasa(int idJugador) {
         List<FichaVista> lista = new ArrayList<>();
         for (FichaVista f : fichas) {
-            if (f.getIdJugador() == idJugador && f.getCasillaActual() == -1) {
+            if (f.getIdJugador() == idJugador && f.getCasillaActual() <= 0) {
                 lista.add(f);
             }
         }
@@ -172,13 +199,18 @@ public class PanelTablero extends JPanel {
     private Point2D calcularCoordenadaCasilla(int casilla, double S, double a, double c) {
         double cw = c / 3.0;
         double ch = a / 8.0;
+
         for (int k = 0; k < 4; k++) {
             for (int r = 0; r < 8; r++) {
                 for (int j = 0; j < 3; j++) {
-                    if (j == 1) continue; 
+                    // CORREGIDO: solo se omite el carril de meta (j == 1 y r >= 1).
+                    // Antes se omitía toda la columna central y la casilla r == 0
+                    // (6, 23, 40 y 57) caía en el centro del tablero.
+                    if (j == 1 && r >= 1) continue; 
 
-                    int base = (j == 0) ? 35 + r : 33 - r;
-                    int numCasilla = Math.floorMod(base - 17 * k - 1, 68) + 1;
+                    // CORREGIDO: la casilla central (j == 1, r == 0) usa base 34
+                    int base = (j == 0) ? 35 + r : (j == 1 ? 34 : 33 - r);
+                    int numCasilla = numeroCasilla(base, k); // NUEVO
 
                     if (numCasilla == casilla) {
                         double localX = a + j * cw + cw / 2.0;
@@ -231,7 +263,7 @@ public class PanelTablero extends JPanel {
                     dibujarNumero(g, "S:" + numeroSalidaDado, x + cw / 2, y + ch / 2, k, fuente);
                 } else if (MOSTRAR_NUMEROS && !carril) {
                     int base = (j == 0) ? 35 + r : (j == 1 ? 34 : 33 - r);
-                    int numero = Math.floorMod(base - 17 * k - 1, 68) + 1;
+                    int numero = numeroCasilla(base, k); // NUEVO
                     dibujarNumero(g, String.valueOf(numero), x + cw / 2, y + ch / 2, k, fuente);
                 }
             }

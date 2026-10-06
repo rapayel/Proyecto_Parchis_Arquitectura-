@@ -20,6 +20,7 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
     private ResultadoLanzarDadoDTO ultimoResultadoDado;
     private ResultadoSeleccionarFichaDTO ultimoResultadoFicha;
     private int idJugadorTurnoActual = 1;
+    private int idJugadorUltimaJugada = -1; // NUEVO
     private boolean dadoLanzadoEnTurno = false;
     
     public ModeloJuego(IFachadaJuego fachadaJuego) {
@@ -46,6 +47,9 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
 
     @Override
     public void solicitarLanzarDado(int idJugador) {
+        // NUEVO: evita que la vista vuelva a aplicar el movimiento anterior
+        this.ultimoResultadoFicha = null;
+
         this.ultimoResultadoDado = fachadaJuego.lanzarDado(new LanzarDadoDTO(idJugador));
         
         if (ultimoResultadoDado != null) {
@@ -62,6 +66,8 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
         this.ultimoResultadoFicha = fachadaJuego.seleccionarFicha(new SeleccionarFichaDTO(idJugador, idFicha));
         
         if (ultimoResultadoFicha != null) {
+            // NUEVO: se guarda quién jugó ANTES de cambiar el turno
+            this.idJugadorUltimaJugada = idJugador;
             this.dadoLanzadoEnTurno = false;
             if (ultimoResultadoFicha.isCambioTurno()) {
                 this.idJugadorTurnoActual = (this.idJugadorTurnoActual % 4) + 1;
@@ -124,5 +130,10 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
     @Override
     public boolean isDadoLanzadoEnTurno() {
         return dadoLanzadoEnTurno;
+    }
+
+    @Override
+    public int getIdJugadorUltimaJugada() {
+        return idJugadorUltimaJugada;
     }
 }

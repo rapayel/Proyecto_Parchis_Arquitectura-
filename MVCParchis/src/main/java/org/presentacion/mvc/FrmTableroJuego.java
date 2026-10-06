@@ -98,12 +98,14 @@ public class FrmTableroJuego extends JFrame implements Observador {
         panelControles.setHabilitarBotonLanzar(puedeLanzar);
 
         if (modelo.getIdFichaSeleccionada() != -1) {
+            // CORREGIDO: se usa el jugador que movió, no el del turno actual
             panelTablero.moverFicha(
-                turnoActual, 
-                modelo.getIdFichaSeleccionada(), 
+                modelo.getIdJugadorUltimaJugada(),
+                modelo.getIdFichaSeleccionada(),
                 modelo.getPosicionFicha()
             );
         }
+        panelTablero.repaint();
     }
 
     private class PanelFondo extends JPanel {

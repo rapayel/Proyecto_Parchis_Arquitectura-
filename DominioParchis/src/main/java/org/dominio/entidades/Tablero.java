@@ -204,6 +204,11 @@ public class Tablero {
         if (posDestino > 0 && posDestino <= totalCasillas) {
             Casilla casillaDestino = casillas.get(posDestino - 1);
             if (casillaDestino.formaBarrera()) {
+                // Revertir posición si hay barrera
+                ficha.setPosicion(posOrigen);
+                if (posOrigen > 0 && posOrigen <= totalCasillas) {
+                    casillas.get(posOrigen - 1).agregarFicha(ficha);
+                }
                 throw new IllegalStateException("La casilla destino (" + posDestino + ") tiene una barrera.");
             }
             casillaDestino.agregarFicha(ficha);

@@ -100,7 +100,7 @@ public class MainJuego {
 
             while (true) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(400);
                 } catch (InterruptedException e) {
                     break;
                 }
@@ -140,8 +140,8 @@ public class MainJuego {
                         int idFicha = scanner.nextInt();
                         scanner.nextLine();
 
+                        final boolean[] exito = {true};
                         try {
-                            final boolean[] exito = {true};
                             SwingUtilities.invokeAndWait(() -> {
                                 try {
                                     controlador.seleccionarFicha(turnoActual, idFicha);
@@ -150,10 +150,10 @@ public class MainJuego {
                                     exito[0] = false;
                                 }
                             });
-                            jugadaRealizada = exito[0];
                         } catch (Exception ex) {
-                            System.out.println("Error al procesar la jugada.");
+                            exito[0] = false;
                         }
+                        jugadaRealizada = exito[0];
                     }
                 }
             }
