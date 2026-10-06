@@ -10,7 +10,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.presentacion.mvc.ControladorJuego;
 
 /**
@@ -29,9 +31,6 @@ public class PanelTablero extends JPanel {
     private List<FichaVista> fichas;
     private ControladorJuego controlador;
     private int idJugadorHumano = 1;
-
-    // NUEVO: desplazamiento con el que se dibuja el tablero dentro del panel.
-    // Las coordenadas de las fichas son relativas al tablero, no al panel.
     private double offsetX = 0;
     private double offsetY = 0;
 
@@ -71,23 +70,25 @@ public class PanelTablero extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (controlador == null) return;
-
-                // CORREGIDO: el clic llega en coordenadas del panel, pero las fichas
-                // están en coordenadas del tablero (trasladado en paintComponent).
                 double mx = e.getX() - offsetX;
                 double my = e.getY() - offsetY;
-
+                FichaVista elegida = null;
+                double mejorDist = Double.MAX_VALUE;
                 for (FichaVista f : fichas) {
                     if (f.getIdJugador() == idJugadorHumano) {
                         double dist = Math.hypot(mx - f.getX(), my - f.getY());
-                        if (dist <= f.getRadio() + 4) { // pequeña tolerancia para facilitar el clic
-                            try {
-                                controlador.seleccionarFicha(idJugadorHumano, f.getIdFicha());
-                            } catch (Exception ex) {
-                                System.out.println("Jugada no válida: " + ex.getMessage());
-                            }
-                            break;
+                        if (dist <= f.getRadio() + 4 && dist < mejorDist) { 
+                            mejorDist = dist;
+                            elegida = f;
                         }
+                    }
+                }
+
+                if (elegida != null) {
+                    try {
+                        controlador.seleccionarFicha(idJugadorHumano, elegida.getIdFicha());
+                    } catch (Exception ex) {
+                        System.out.println("Jugada no válida: " + ex.getMessage());
                     }
                 }
             }
@@ -104,14 +105,6 @@ public class PanelTablero extends JPanel {
         repaint();
     }
 
-    /**
-     * NUEVO: numeración de casillas en sentido horario.
-     * La salida (S:5) de cada jugador queda en 1, 18, 35 y 52 (k = 0..3),
-     * igual que en el dominio.
-     *
-     * @param base valor base de la casilla en el brazo 0 (35 + r, 34 o 33 - r)
-     * @param k    índice del brazo (0 a 3)
-     */
     private int numeroCasilla(int base, int k) {
         return Math.floorMod(39 - base + 17 * k, 68) + 1;
     }
@@ -125,8 +118,8 @@ public class PanelTablero extends JPanel {
         g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
  
         double S = Math.min(getWidth(), getHeight()) - 20; 
-        offsetX = (getWidth() - S) / 2.0;   // NUEVO
-        offsetY = (getHeight() - S) / 2.0;  // NUEVO
+        offsetX = (getWidth() - S) / 2.0;   
+        offsetY = (getHeight() - S) / 2.0;  
         g.translate(offsetX, offsetY);
  
         double c = S * 0.33;        
@@ -184,6 +177,55 @@ public class PanelTablero extends JPanel {
                 }
             }
         }
+        separarFichasSuperpuestas(c);
+    }
+
+    private void separarFichasSuperpuestas(double c) {
+        Map<Integer, List<FichaVista>> porCasilla = new LinkedHashMap<>();
+        for (FichaVista f : fichas) {
+            if (f.getCasillaActual() > 0) {
+                porCasilla.computeIfAbsent(f.getCasillaActual(), k -> new ArrayList<>()).add(f);
+            }
+        }
+
+        double largoCasilla = c / 3.0; 
+
+        for (Map.Entry<Integer, List<FichaVista>> entrada : porCasilla.entrySet()) {
+            List<FichaVista> grupo = entrada.getValue();
+            int n = grupo.size();
+            if (n < 2) continue;
+            boolean horizontal = (brazoDeCasilla(entrada.getKey()) % 2 == 0);
+
+            double radio = Math.min(grupo.get(0).getRadio() * 0.85, (largoCasilla * 0.9) / (2.0 * n));
+            double paso = radio * 2;
+            double cx = grupo.get(0).getX();
+            double cy = grupo.get(0).getY();
+
+            for (int i = 0; i < n; i++) {
+                double desplazamiento = (i - (n - 1) / 2.0) * paso;
+                FichaVista f = grupo.get(i);
+                f.setRadio(radio);
+                if (horizontal) {
+                    f.setPosicion(cx + desplazamiento, cy);
+                } else {
+                    f.setPosicion(cx, cy + desplazamiento);
+                }
+            }
+        }
+    }
+    private int brazoDeCasilla(int casilla) {
+        for (int k = 0; k < 4; k++) {
+            for (int r = 0; r < 8; r++) {
+                for (int j = 0; j < 3; j++) {
+                    if (j == 1 && r >= 1) continue;
+                    int base = (j == 0) ? 35 + r : (j == 1 ? 34 : 33 - r);
+                    if (numeroCasilla(base, k) == casilla) {
+                        return k;
+                    }
+                }
+            }
+        }
+        return 0;
     }
 
     private List<FichaVista> obtenerFichasEnCasa(int idJugador) {
@@ -203,14 +245,12 @@ public class PanelTablero extends JPanel {
         for (int k = 0; k < 4; k++) {
             for (int r = 0; r < 8; r++) {
                 for (int j = 0; j < 3; j++) {
-                    // CORREGIDO: solo se omite el carril de meta (j == 1 y r >= 1).
-                    // Antes se omitía toda la columna central y la casilla r == 0
-                    // (6, 23, 40 y 57) caía en el centro del tablero.
+                  
                     if (j == 1 && r >= 1) continue; 
 
-                    // CORREGIDO: la casilla central (j == 1, r == 0) usa base 34
+                    
                     int base = (j == 0) ? 35 + r : (j == 1 ? 34 : 33 - r);
-                    int numCasilla = numeroCasilla(base, k); // NUEVO
+                    int numCasilla = numeroCasilla(base, k);
 
                     if (numCasilla == casilla) {
                         double localX = a + j * cw + cw / 2.0;
