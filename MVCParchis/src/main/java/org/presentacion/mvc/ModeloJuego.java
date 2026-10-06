@@ -47,7 +47,6 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
 
     @Override
     public void solicitarLanzarDado(int idJugador) {
-        // NUEVO: evita que la vista vuelva a aplicar el movimiento anterior
         this.ultimoResultadoFicha = null;
 
         this.ultimoResultadoDado = fachadaJuego.lanzarDado(new LanzarDadoDTO(idJugador));
@@ -66,7 +65,6 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
         this.ultimoResultadoFicha = fachadaJuego.seleccionarFicha(new SeleccionarFichaDTO(idJugador, idFicha));
         
         if (ultimoResultadoFicha != null) {
-            // NUEVO: se guarda quién jugó ANTES de cambiar el turno
             this.idJugadorUltimaJugada = idJugador;
             this.dadoLanzadoEnTurno = false;
             if (ultimoResultadoFicha.isCambioTurno()) {

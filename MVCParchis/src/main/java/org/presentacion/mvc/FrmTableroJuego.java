@@ -98,7 +98,6 @@ public class FrmTableroJuego extends JFrame implements Observador {
         panelControles.setHabilitarBotonLanzar(puedeLanzar);
 
         if (modelo.getIdFichaSeleccionada() != -1) {
-            // CORREGIDO: se usa el jugador que movió, no el del turno actual
             panelTablero.moverFicha(
                 modelo.getIdJugadorUltimaJugada(),
                 modelo.getIdFichaSeleccionada(),
