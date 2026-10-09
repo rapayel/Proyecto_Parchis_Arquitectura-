@@ -20,7 +20,7 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
     private ResultadoLanzarDadoDTO ultimoResultadoDado;
     private ResultadoSeleccionarFichaDTO ultimoResultadoFicha;
     private int idJugadorTurnoActual = 1;
-    private int idJugadorUltimaJugada = -1; // NUEVO
+    private int idJugadorUltimaJugada = -1;
     private boolean dadoLanzadoEnTurno = false;
     
     public ModeloJuego(IFachadaJuego fachadaJuego) {
