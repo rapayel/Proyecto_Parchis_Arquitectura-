@@ -86,7 +86,8 @@ public class PanelTablero extends JPanel {
 
                 if (elegida != null) {
                     try {
-                        controlador.seleccionarFicha(idJugadorHumano, elegida.getIdFicha());
+                        int id = elegida.getIdFicha();
+                        controlador.seleccionarFicha(idJugadorHumano, id);
                     } catch (Exception ex) {
                         System.out.println("Jugada no válida: " + ex.getMessage());
                     }
