@@ -18,6 +18,7 @@ import org.dominio.entidades.Jugador;
 import org.dominio.entidades.Tablero;
 import org.dominio.fachada.FachadaJuego;
 import org.dominio.fachada.IFachadaJuego;
+import org.dtos.FichaDTO;
 import org.presentacion.mvc.paneles.PanelControles;
 import org.presentacion.mvc.paneles.PanelJugador;
 import org.presentacion.mvc.paneles.PanelTablero;
@@ -127,6 +128,7 @@ public class MainJuego {
                     }
 
                     System.out.println("Dado obtenido: " + modelo.getValorDado());
+                    imprimirFichas(modelo, turnoActual);
 
                     boolean jugadaRealizada = false;
                     while (!jugadaRealizada) {
@@ -160,6 +162,19 @@ public class MainJuego {
         });
         hiloConsola.setDaemon(true);
         hiloConsola.start();
+    }
+
+    private static void imprimirFichas(ModeloJuego modelo, int idJugador) {
+        StringBuilder texto = new StringBuilder("Tus fichas:");
+        for (FichaDTO ficha : modelo.getFichas()) {
+            if (ficha.getIdJugador() != idJugador) {
+                continue;
+            }
+            int pos = ficha.getPosicion();
+            String lugar = pos <= 0 ? "círculo" : pos <= 68 ? "casilla " + pos : pos < 76 ? "pasillo " + (pos - 68) : "meta";
+            texto.append(" ").append(ficha.getIdFicha()).append(" (").append(lugar).append(")");
+        }
+        System.out.println(texto);
     }
 
     private static BufferedImage cargarImagen(String ruta) {

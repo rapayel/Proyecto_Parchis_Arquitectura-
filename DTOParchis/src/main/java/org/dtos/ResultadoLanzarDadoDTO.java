@@ -5,9 +5,10 @@
 package org.dtos;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * 
+ *
  * @author Equipo 1
  */
 public class ResultadoLanzarDadoDTO implements Serializable{
@@ -17,19 +18,22 @@ public class ResultadoLanzarDadoDTO implements Serializable{
     private boolean puedeVolverATirar;
     private boolean puedeSacarFicha;
     private boolean tieneMovimientoValido;
+    private List<FichaDTO> fichas;
 
     public ResultadoLanzarDadoDTO(
             int idJugador,
             int resultadoDado,
             boolean puedeVolverATirar,
             boolean puedeSacarFicha,
-            boolean tieneMovimientoValido) {
+            boolean tieneMovimientoValido,
+            List<FichaDTO> fichas) {
 
         this.idJugador = idJugador;
         this.resultadoDado = resultadoDado;
         this.puedeVolverATirar = puedeVolverATirar;
         this.puedeSacarFicha = puedeSacarFicha;
         this.tieneMovimientoValido = tieneMovimientoValido;
+        this.fichas = fichas;
     }
 
     public int getIdJugador() {
@@ -50,5 +54,9 @@ public class ResultadoLanzarDadoDTO implements Serializable{
 
     public boolean isTieneMovimientoValido() {
         return tieneMovimientoValido;
+    }
+
+    public List<FichaDTO> getFichas() {
+        return fichas;
     }
 }

@@ -5,10 +5,11 @@
 package org.dominio.entidades;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * 
+ *
  * @author Equipo 1
  */
 public class Jugador {
@@ -16,13 +17,15 @@ public class Jugador {
     private String nombre;
     private String avatar;
     private List<Ficha> fichas;
+    private int casillaSalida;
+    private int casillaEntradaPasillo;
 
     public Jugador(int id, String nombre, String avatar, List<Ficha> fichas) {
         if (fichas == null || fichas.isEmpty()) {
             throw new IllegalArgumentException("El jugador debe crearse con sus fichas correspondientes.");
         }
-        if (fichas.size() != 4) {
-            throw new IllegalArgumentException("El jugador debe contar exactamente con 4 fichas.");
+        if (fichas.size() < 3 || fichas.size() > 6) {
+            throw new IllegalArgumentException("El jugador debe contar con entre 3 y 6 fichas.");
         }
 
         this.id = id;
@@ -43,6 +46,11 @@ public class Jugador {
         this.fichas.add(ficha);
     }
 
+    public void asignarRecorrido(int casillaSalida, int casillaEntradaPasillo) {
+        this.casillaSalida = casillaSalida;
+        this.casillaEntradaPasillo = casillaEntradaPasillo;
+    }
+
     public Ficha obtenerFicha(int idFicha) {
         for (Ficha ficha : fichas) {
             if (ficha.getId() == idFicha) {
@@ -52,18 +60,9 @@ public class Jugador {
         return null;
     }
 
-    public Ficha obtenerFichaEnJuegoDistintaDe(Ficha fichaExcluida) {
-        for (Ficha ficha : fichas) {
-            if (ficha.estaEnJuego() && ficha != fichaExcluida) {
-                return ficha;
-            }
-        }
-        return null;
-    }
-
     public boolean tieneFichaEnJuego() {
         for (Ficha ficha : fichas) {
-            if (ficha.estaEnJuego()) {
+            if (ficha.puedeMoverse()) {
                 return true;
             }
         }
@@ -88,12 +87,28 @@ public class Jugador {
         return true;
     }
 
+    public List<Ficha> getFichas() {
+        return Collections.unmodifiableList(fichas);
+    }
+
+    public int getCasillaSalida() {
+        return casillaSalida;
+    }
+
+    public int getCasillaEntradaPasillo() {
+        return casillaEntradaPasillo;
+    }
+
     public int getId() {
         return id;
     }
 
     public String getNombre() {
         return nombre;
+    }
+
+    public String getAvatar() {
+        return avatar;
     }
 
     public String getPerfilCompleto() {

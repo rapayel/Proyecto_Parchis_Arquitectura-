@@ -5,7 +5,10 @@
 package org.dominio.entidades;
 
 /**
- * 
+ * Ficha de un jugador. Su posición se interpreta según su estado:
+ * SALIDA = -1 (en el círculo), EN_JUEGO = 1..68 (casilla del recorrido común),
+ * PASILLO_FINAL = 69..75 (casilla de su propio pasillo) y META = 76.
+ *
  * @author Equipo 1
  */
 public class Ficha {
@@ -29,30 +32,21 @@ public class Ficha {
         posicion = casillaSalida;
     }
 
-    public boolean avanzarORebotar(int cantidad, int limiteMeta) {
-        if (estado == Estado.SALIDA || estado == Estado.META) {
+    public void moverA(int nuevaPosicion, Estado nuevoEstado) {
+        if (!puedeMoverse()) {
             throw new IllegalStateException("La ficha no se puede mover en este estado.");
         }
-
-        int nuevaPosicion = posicion + cantidad;
-
-        if (nuevaPosicion == limiteMeta) {
-            setPosicion(limiteMeta);
-            estado = Estado.META;
-            return true;
-        } else if (nuevaPosicion > limiteMeta) {
-            int exceso = nuevaPosicion - limiteMeta;
-            setPosicion(limiteMeta - exceso);
-            return false;
-        } else {
-            setPosicion(nuevaPosicion);
-            return false;
-        }
+        posicion = nuevaPosicion;
+        estado = nuevoEstado;
     }
 
     public void regresarASalida() {
-        setPosicion(-1);
+        posicion = -1;
         estado = Estado.SALIDA;
+    }
+
+    public boolean puedeMoverse() {
+        return estado == Estado.EN_JUEGO || estado == Estado.PASILLO_FINAL;
     }
 
     public boolean estaEnSalida() {
@@ -61,6 +55,10 @@ public class Ficha {
 
     public boolean estaEnJuego() {
         return estado == Estado.EN_JUEGO;
+    }
+
+    public boolean estaEnPasilloFinal() {
+        return estado == Estado.PASILLO_FINAL;
     }
 
     public boolean estaEnMeta() {
@@ -83,14 +81,10 @@ public class Ficha {
         return posicion;
     }
 
-    public void setPosicion(int posicion) {
-        this.posicion = posicion;
-    }
-
     public Estado getEstado() {
         return estado;
     }
-    
+
     public enum Estado {
         SALIDA,
         EN_JUEGO,

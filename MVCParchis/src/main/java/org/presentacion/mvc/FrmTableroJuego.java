@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import org.dtos.FichaDTO;
 import org.presentacion.interfaces.IModeloLectura;
 import org.presentacion.interfaces.Observador;
 import org.presentacion.mvc.paneles.PanelControles;
@@ -97,12 +98,8 @@ public class FrmTableroJuego extends JFrame implements Observador {
         boolean puedeLanzar = esTurnoJugadorHumano && !modelo.isDadoLanzadoEnTurno();
         panelControles.setHabilitarBotonLanzar(puedeLanzar);
 
-        if (modelo.getIdFichaSeleccionada() != -1) {
-            panelTablero.moverFicha(
-                modelo.getIdJugadorUltimaJugada(),
-                modelo.getIdFichaSeleccionada(),
-                modelo.getPosicionFicha()
-            );
+        for (FichaDTO ficha : modelo.getFichas()) {
+            panelTablero.moverFicha(ficha.getIdJugador(), ficha.getIdFicha(), ficha.getPosicion());
         }
         panelTablero.repaint();
     }

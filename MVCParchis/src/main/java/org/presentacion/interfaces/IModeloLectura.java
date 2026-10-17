@@ -4,6 +4,9 @@
  */
 package org.presentacion.interfaces;
 
+import java.util.List;
+import org.dtos.FichaDTO;
+
 /**
  *
  * @author Equipo 1
@@ -23,6 +26,7 @@ public interface IModeloLectura {
     boolean isCapturo();
     boolean isLlegoAMeta();
     boolean isCambioTurno();
+    List<FichaDTO> getFichas();
 
     int getIdJugadorTurnoActual();
     boolean isDadoLanzadoEnTurno();

@@ -41,6 +41,10 @@ public class Casilla {
         return !fichas.isEmpty();
     }
 
+    public boolean estaLlena() {
+        return fichas.size() >= 2;
+    }
+
     public boolean tieneFichaRival(Jugador jugador) {
         for (Ficha ficha : fichas) {
             if (ficha.getJugador() != jugador) {

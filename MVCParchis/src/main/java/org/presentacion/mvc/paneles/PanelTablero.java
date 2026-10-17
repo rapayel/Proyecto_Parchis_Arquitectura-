@@ -20,6 +20,7 @@ import org.presentacion.mvc.ControladorJuego;
  * @author Equipo 1
  */
 public class PanelTablero extends JPanel {
+    private static final int[] CASILLAS_SEGURAS_ALA = {39, 29, 34, 42, 26};
     private final Color COLOR_MARCO = new Color(0x7A5230);
     private final boolean MOSTRAR_NUMEROS = true;
     
@@ -106,8 +107,22 @@ public class PanelTablero extends JPanel {
         repaint();
     }
 
+    /**
+     * Numera las casillas como en el tablero de referencia: "base" es el número de la
+     * casilla en el ala superior (26..42) y cada ala girada resta 17, de modo que los
+     * números crecen en sentido antihorario.
+     */
     private int numeroCasilla(int base, int k) {
-        return Math.floorMod(39 - base + 17 * k, 68) + 1;
+        return Math.floorMod(base - 1 - 17 * k, 68) + 1;
+    }
+
+    private boolean esCasillaSegura(int base) {
+        for (int i = 0; i < casillasSegurasPorAla; i++) {
+            if (CASILLAS_SEGURAS_ALA[i] == base) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -171,31 +186,37 @@ public class PanelTablero extends JPanel {
 
                 double angulo = Math.toRadians((360.0 / totalEnCasa) * orden - 90);
                 f.setPosicion(cx + Math.cos(angulo) * radioDistribucion, cy + Math.sin(angulo) * radioDistribucion);
-            } else { 
+            } else if (pos <= 68) {
                 Point2D coord = calcularCoordenadaCasilla(pos, S, tamCasa, c);
-                if (coord != null) {
-                    f.setPosicion(coord.getX(), coord.getY());
-                }
+                f.setPosicion(coord.getX(), coord.getY());
+            } else {
+                Point2D coord = calcularCoordenadaPasillo(f.getIdJugador() - 1, pos - 68, S, tamCasa, c);
+                f.setPosicion(coord.getX(), coord.getY());
             }
         }
         separarFichasSuperpuestas(c);
     }
 
     private void separarFichasSuperpuestas(double c) {
+        // Las casillas del pasillo y la meta (69..76) son propias de cada jugador.
         Map<Integer, List<FichaVista>> porCasilla = new LinkedHashMap<>();
         for (FichaVista f : fichas) {
-            if (f.getCasillaActual() > 0) {
-                porCasilla.computeIfAbsent(f.getCasillaActual(), k -> new ArrayList<>()).add(f);
+            int pos = f.getCasillaActual();
+            if (pos > 0) {
+                int clave = pos <= 68 ? pos : pos * 10 + f.getIdJugador();
+                porCasilla.computeIfAbsent(clave, k -> new ArrayList<>()).add(f);
             }
         }
 
-        double largoCasilla = c / 3.0; 
+        double largoCasilla = c / 3.0;
 
         for (Map.Entry<Integer, List<FichaVista>> entrada : porCasilla.entrySet()) {
             List<FichaVista> grupo = entrada.getValue();
             int n = grupo.size();
             if (n < 2) continue;
-            boolean horizontal = (brazoDeCasilla(entrada.getKey()) % 2 == 0);
+            int pos = grupo.get(0).getCasillaActual();
+            int brazo = pos <= 68 ? brazoDeCasilla(pos) : grupo.get(0).getIdJugador() - 1;
+            boolean horizontal = (brazo % 2 == 0);
 
             double radio = Math.min(grupo.get(0).getRadio() * 0.85, (largoCasilla * 0.9) / (2.0 * n));
             double paso = radio * 2;
@@ -256,19 +277,36 @@ public class PanelTablero extends JPanel {
                     if (numCasilla == casilla) {
                         double localX = a + j * cw + cw / 2.0;
                         double localY = r * ch + ch / 2.0;
-                        double cx = S / 2.0;
-                        double cy = S / 2.0;
-                        double rad = k * Math.PI / 2.0;
-
-                        double rx = cx + (localX - cx) * Math.cos(rad) - (localY - cy) * Math.sin(rad);
-                        double ry = cy + (localX - cx) * Math.sin(rad) + (localY - cy) * Math.cos(rad);
-
-                        return new Point2D.Double(rx, ry);
+                        return rotarDesdeAlaSuperior(localX, localY, k, S);
                     }
                 }
             }
         }
-        return new Point2D.Double(S / 2.0, S / 2.0); 
+        return new Point2D.Double(S / 2.0, S / 2.0);
+    }
+
+    /**
+     * Coordenada de una casilla del pasillo final (1..7, columna central del ala del
+     * jugador) o de la meta (8, dentro del triángulo de su color).
+     */
+    private Point2D calcularCoordenadaPasillo(int k, int casillaPasillo, double S, double a, double c) {
+        double cw = c / 3.0;
+        double ch = a / 8.0;
+        if (casillaPasillo <= 7) {
+            return rotarDesdeAlaSuperior(a + cw + cw / 2.0, casillaPasillo * ch + ch / 2.0, k, S);
+        }
+        return rotarDesdeAlaSuperior(S / 2.0, a + c / 6.0, k, S);
+    }
+
+    private Point2D rotarDesdeAlaSuperior(double localX, double localY, int k, double S) {
+        double cx = S / 2.0;
+        double cy = S / 2.0;
+        double rad = k * Math.PI / 2.0;
+
+        double rx = cx + (localX - cx) * Math.cos(rad) - (localY - cy) * Math.sin(rad);
+        double ry = cy + (localX - cx) * Math.sin(rad) + (localY - cy) * Math.cos(rad);
+
+        return new Point2D.Double(rx, ry);
     }
 
     private void dibujarBrazo(Graphics2D g, int k, double S, double a, double c) {
@@ -283,9 +321,10 @@ public class PanelTablero extends JPanel {
                 double x = a + j * cw;
                 double y = r * ch;
  
+                int base = (j == 0) ? 35 + r : (j == 1 ? 34 : 33 - r);
                 boolean carril = (j == 1 && r >= 1);
                 boolean salida = (j == 0 && r == 4);
-                boolean esSeguraConfigurada = (j == 0 && r >= (8 - casillasSegurasPorAla));
+                boolean esSeguraConfigurada = !carril && esCasillaSegura(base);
 
                 if (carril || salida) {
                     g.setColor(color);
@@ -303,8 +342,7 @@ public class PanelTablero extends JPanel {
                 if (salida) {
                     dibujarNumero(g, "S:" + numeroSalidaDado, x + cw / 2, y + ch / 2, k, fuente);
                 } else if (MOSTRAR_NUMEROS && !carril) {
-                    int base = (j == 0) ? 35 + r : (j == 1 ? 34 : 33 - r);
-                    int numero = numeroCasilla(base, k); // NUEVO
+                    int numero = numeroCasilla(base, k);
                     dibujarNumero(g, String.valueOf(numero), x + cw / 2, y + ch / 2, k, fuente);
                 }
             }

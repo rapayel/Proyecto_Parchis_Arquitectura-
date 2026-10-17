@@ -5,9 +5,10 @@
 package org.dtos;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * 
+ *
  * @author Equipo 1
  */
 public class ResultadoSeleccionarFichaDTO implements Serializable{
@@ -18,6 +19,7 @@ public class ResultadoSeleccionarFichaDTO implements Serializable{
     private boolean capturo;
     private boolean llegoAMeta;
     private boolean cambioTurno;
+    private List<FichaDTO> fichas;
 
     public ResultadoSeleccionarFichaDTO(
             int idJugador,
@@ -25,7 +27,8 @@ public class ResultadoSeleccionarFichaDTO implements Serializable{
             int posicionFicha,
             boolean capturo,
             boolean llegoAMeta,
-            boolean cambioTurno) {
+            boolean cambioTurno,
+            List<FichaDTO> fichas) {
 
         this.idJugador = idJugador;
         this.idFicha = idFicha;
@@ -33,6 +36,7 @@ public class ResultadoSeleccionarFichaDTO implements Serializable{
         this.capturo = capturo;
         this.llegoAMeta = llegoAMeta;
         this.cambioTurno = cambioTurno;
+        this.fichas = fichas;
     }
 
     public int getIdJugador() {
@@ -57,5 +61,9 @@ public class ResultadoSeleccionarFichaDTO implements Serializable{
 
     public boolean isCambioTurno() {
         return cambioTurno;
+    }
+
+    public List<FichaDTO> getFichas() {
+        return fichas;
     }
 }
