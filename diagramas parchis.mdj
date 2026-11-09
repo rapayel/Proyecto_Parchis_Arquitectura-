@@ -373,7 +373,7 @@
 									"font": "Arial;13;0",
 									"left": 639.5,
 									"top": 189,
-									"width": 112.5654296875,
+									"width": 112,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqES3Pf4HLc="
@@ -566,7 +566,7 @@
 									"font": "Arial;13;0",
 									"left": 403,
 									"top": 189,
-									"width": 91.64990234375,
+									"width": 91,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqFMkfgp/jE="
@@ -752,7 +752,7 @@
 									"font": "Arial;13;0",
 									"left": 412.5,
 									"top": 253,
-									"width": 98.1435546875,
+									"width": 97,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqGUE/hYzfw="
@@ -1403,7 +1403,7 @@
 									"font": "Arial;13;0",
 									"left": 396,
 									"top": 341,
-									"width": 95.97900390625,
+									"width": 95,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqMkSPyazcs="
@@ -1864,7 +1864,7 @@
 									"font": "Arial;13;0",
 									"left": 415,
 									"top": 413,
-									"width": 108.9853515625,
+									"width": 108,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqNxyv7a9jo="
@@ -2325,7 +2325,7 @@
 									"font": "Arial;13;0",
 									"left": 631,
 									"top": 389,
-									"width": 110.419921875,
+									"width": 110,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqPaowKmpEY="
@@ -7509,9 +7509,9 @@
 																"$ref": "AAAAAAGgg5rN9v46oF4="
 															},
 															"font": "Arial;13;0",
-															"left": 32.72998046875,
+															"left": 30.55908203125,
 															"top": 13,
-															"width": 132.96435546875,
+															"width": 118.396484375,
 															"height": 13,
 															"text": "RealizarJugadaExitosa"
 														},
@@ -7524,7 +7524,7 @@
 															"font": "Arial;13;1",
 															"left": 13,
 															"top": 13,
-															"width": 13.72998046875,
+															"width": 11.55908203125,
 															"height": 13,
 															"text": "sd"
 														}
@@ -9155,9 +9155,9 @@
 																"$ref": "AAAAAAGgg7B+zRX/NCg="
 															},
 															"font": "Arial;13;0",
-															"left": 575.9599609375,
+															"left": 572.3291015625,
 															"top": 309,
-															"width": 179.96240234375,
+															"width": 162.0556640625,
 															"height": 13,
 															"text": "bucle de cada ficha del jugador"
 														},
@@ -9170,7 +9170,7 @@
 															"font": "Arial;13;1",
 															"left": 549,
 															"top": 309,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -9479,9 +9479,9 @@
 																"$ref": "AAAAAAGgg7T+zhZXPCE="
 															},
 															"font": "Arial;13;0",
-															"left": 575.9599609375,
+															"left": 572.3291015625,
 															"top": 405,
-															"width": 169.0888671875,
+															"width": 153.3974609375,
 															"height": 13,
 															"text": "bucle revisando la trayectoria"
 														},
@@ -9494,7 +9494,7 @@
 															"font": "Arial;13;1",
 															"left": 549,
 															"top": 405,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -10694,9 +10694,9 @@
 																"$ref": "AAAAAAGgg8BlBSuX7FY="
 															},
 															"font": "Arial;13;0",
-															"left": 551.9599609375,
+															"left": 548.3291015625,
 															"top": 701,
-															"width": 173.42431640625,
+															"width": 156.27294921875,
 															"height": 13,
 															"text": "en caso de capturar ficha rival"
 														},
@@ -10709,7 +10709,7 @@
 															"font": "Arial;13;1",
 															"left": 525,
 															"top": 701,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -11241,9 +11241,9 @@
 																"$ref": "AAAAAAGgg8NbdCwRl0o="
 															},
 															"font": "Arial;13;0",
-															"left": 551.9599609375,
+															"left": 548.3291015625,
 															"top": 837,
-															"width": 169.8125,
+															"width": 150.8583984375,
 															"height": 13,
 															"text": "en caso de formacion barrera"
 														},
@@ -11256,7 +11256,7 @@
 															"font": "Arial;13;1",
 															"left": 525,
 															"top": 837,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -11565,9 +11565,9 @@
 																"$ref": "AAAAAAGgg8ZjISx8TTo="
 															},
 															"font": "Arial;13;0",
-															"left": 551.9599609375,
+															"left": 548.3291015625,
 															"top": 917,
-															"width": 208.1396484375,
+															"width": 181.5302734375,
 															"height": 13,
 															"text": "en caso de llegada exacta a la meta"
 														},
@@ -11580,7 +11580,7 @@
 															"font": "Arial;13;1",
 															"left": 525,
 															"top": 917,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -12781,9 +12781,9 @@
 																"$ref": "AAAAAAGgg882QS2JTlI="
 															},
 															"font": "Arial;13;0",
-															"left": 543.9599609375,
+															"left": 540.3291015625,
 															"top": 1213,
-															"width": 106.97705078125,
+															"width": 92.4091796875,
 															"height": 13,
 															"text": "en caso de que no"
 														},
@@ -12796,7 +12796,7 @@
 															"font": "Arial;13;1",
 															"left": 517,
 															"top": 1213,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -22140,7 +22140,7 @@
 									"containerExtending": true,
 									"left": 236,
 									"top": 644,
-									"width": 79.380859375,
+									"width": 72.3125,
 									"height": 36,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgg34LgOPciUg="
@@ -22328,7 +22328,7 @@
 									"containerExtending": true,
 									"left": 236,
 									"top": 708,
-									"width": 79.380859375,
+									"width": 72.3125,
 									"height": 36,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgg34LgOPm+sM="
@@ -22516,7 +22516,7 @@
 									"containerExtending": true,
 									"left": 236,
 									"top": 764,
-									"width": 79.380859375,
+									"width": 72.3125,
 									"height": 36,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgg34LgOPw+8w="
@@ -22704,7 +22704,7 @@
 									"containerExtending": true,
 									"left": 236,
 									"top": 820,
-									"width": 92.013671875,
+									"width": 83.685546875,
 									"height": 36,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgg34LgOP6xW0="
@@ -22892,7 +22892,7 @@
 									"containerExtending": true,
 									"left": 236,
 									"top": 876,
-									"width": 79.380859375,
+									"width": 72.3125,
 									"height": 36,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgg34LgOQEF/E="
@@ -23820,7 +23820,7 @@
 									"containerExtending": true,
 									"left": 740,
 									"top": 60,
-									"width": 120.396484375,
+									"width": 113.427734375,
 									"height": 22
 								},
 								{
@@ -23977,7 +23977,7 @@
 									"containerExtending": true,
 									"left": 740,
 									"top": 96,
-									"width": 79.380859375,
+									"width": 72.3125,
 									"height": 36,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgg34LgOQ3vFc="
@@ -24165,7 +24165,7 @@
 									"containerExtending": true,
 									"left": 740,
 									"top": 148,
-									"width": 79.380859375,
+									"width": 72.3125,
 									"height": 36,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgg34LgeRBPGM="
@@ -51003,9 +51003,9 @@
 																"$ref": "AAAAAAGhIdiBaGmsLA4="
 															},
 															"font": "Arial;13;0",
-															"left": 24.72998046875,
+															"left": 22.55908203125,
 															"top": 29,
-															"width": 114.9052734375,
+															"width": 101.791015625,
 															"height": 13,
 															"text": "SequenceDiagram1"
 														},
@@ -51018,7 +51018,7 @@
 															"font": "Arial;13;1",
 															"left": 5,
 															"top": 29,
-															"width": 13.72998046875,
+															"width": 11.55908203125,
 															"height": 13,
 															"text": "sd"
 														}
@@ -87092,6 +87092,7 @@
 					"_parent": {
 						"$ref": "AAAAAAGhvNAUtt0F9kA="
 					},
+					"name": "Diagrama de componentes",
 					"ownedViews": [
 						{
 							"_type": "UMLNodeView",
@@ -90084,6 +90085,19 @@
 							"propertyLabel": {
 								"$ref": "AAAAAAGhvNu6l+H/FUQ="
 							}
+						},
+						{
+							"_type": "UMLTextView",
+							"_id": "AAAAAAGhwkXdEDZyxTc=",
+							"_parent": {
+								"$ref": "AAAAAAGhvNNFRN0Jonw="
+							},
+							"font": "Arial;13;0",
+							"left": 320,
+							"top": 376,
+							"width": 100,
+							"height": 25,
+							"text": "Java GUI"
 						}
 					]
 				},
@@ -91667,9 +91681,9 @@
 														"$ref": "AAAAAAGhwcjedK5LGUg="
 													},
 													"font": "Arial;13;0",
-													"left": 147,
+													"left": 145,
 													"top": 120,
-													"width": 78.04443359375,
+													"width": 82.392578125,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -91677,7 +91691,7 @@
 														"$ref": "AAAAAAGhwcjeda5MDYs="
 													},
 													"edgePosition": 1,
-													"text": "1 : Message1"
+													"text": "1 : lanza dado"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -91778,9 +91792,9 @@
 														"$ref": "AAAAAAGhwckaN65gIY0="
 													},
 													"font": "Arial;13;0",
-													"left": 318,
+													"left": 293,
 													"top": 138,
-													"width": 78.04443359375,
+													"width": 129.3525390625,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -91788,7 +91802,7 @@
 														"$ref": "AAAAAAGhwckaN65hZNg="
 													},
 													"edgePosition": 1,
-													"text": "2 : Message2"
+													"text": "2 : solicita lanzar dado"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -91889,9 +91903,9 @@
 														"$ref": "AAAAAAGhwclF9a51qds="
 													},
 													"font": "Arial;13;0",
-													"left": 489,
+													"left": 456,
 													"top": 160,
-													"width": 78.04443359375,
+													"width": 144.99951171875,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -91899,7 +91913,7 @@
 														"$ref": "AAAAAAGhwclF9a528/0="
 													},
 													"edgePosition": 1,
-													"text": "3 : crea DTO"
+													"text": "3 : crea DTOLanzarDado"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -92000,9 +92014,9 @@
 														"$ref": "AAAAAAGhwcljva6LLBU="
 													},
 													"font": "Arial;13;0",
-													"left": 509,
+													"left": 473,
 													"top": 210,
-													"width": 45.271484375,
+													"width": 116.0986328125,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -92010,7 +92024,7 @@
 														"$ref": "AAAAAAGhwcljva6M/qQ="
 													},
 													"edgePosition": 1,
-													"text": "4 : DTO"
+													"text": "4 : DTOLanzarDado"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -92112,9 +92126,9 @@
 														"$ref": "AAAAAAGhwcoAXK65I9g="
 													},
 													"font": "Arial;13;0",
-													"left": 585,
+													"left": 569,
 													"top": 224,
-													"width": 78.04443359375,
+													"width": 110.296875,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -92122,7 +92136,7 @@
 														"$ref": "AAAAAAGhwcoAXK66jWs="
 													},
 													"edgePosition": 1,
-													"text": "5 : Message3"
+													"text": "5 : serializa el DTO"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -92223,9 +92237,9 @@
 														"$ref": "AAAAAAGhwcreRq7OrrA="
 													},
 													"font": "Arial;13;0",
-													"left": 873,
+													"left": 778,
 													"top": 240,
-													"width": 78.04443359375,
+													"width": 268.82958984375,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -92233,7 +92247,7 @@
 														"$ref": "AAAAAAGhwcreRq7P4iY="
 													},
 													"edgePosition": 1,
-													"text": "6 : Message4"
+													"text": "6 : prepara el objeto serializado para mandarlo"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -92334,9 +92348,9 @@
 														"$ref": "AAAAAAGhwcshNK7jvz8="
 													},
 													"font": "Arial;13;0",
-													"left": 1126,
+													"left": 1049,
 													"top": 260,
-													"width": 78.04443359375,
+													"width": 232.41943359375,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -92344,7 +92358,7 @@
 														"$ref": "AAAAAAGhwcshNK7kSXU="
 													},
 													"edgePosition": 1,
-													"text": "7 : Message5"
+													"text": "7 : envia solicitud al servidor con el DTO"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -92445,9 +92459,9 @@
 														"$ref": "AAAAAAGhwcs46K74Hg8="
 													},
 													"font": "Arial;13;0",
-													"left": 1373,
+													"left": 1323,
 													"top": 278,
-													"width": 78.04443359375,
+													"width": 179.20068359375,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -92455,7 +92469,7 @@
 														"$ref": "AAAAAAGhwcs46K75iGs="
 													},
 													"edgePosition": 1,
-													"text": "8 : Message6"
+													"text": "8 : descifra el mensaje recibido"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -92556,9 +92570,9 @@
 														"$ref": "AAAAAAGhwctK8a8Nng8="
 													},
 													"font": "Arial;13;0",
-													"left": 1563,
+													"left": 1516,
 													"top": 297,
-													"width": 78.04443359375,
+													"width": 173.4306640625,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -92566,7 +92580,7 @@
 														"$ref": "AAAAAAGhwctK8q8OAuA="
 													},
 													"edgePosition": 1,
-													"text": "9 : Message7"
+													"text": "9 : manda el mensaje recibido"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -92667,9 +92681,9 @@
 														"$ref": "AAAAAAGhwdSpELAagjQ="
 													},
 													"font": "Arial;13;0",
-													"left": 1740,
+													"left": 1695,
 													"top": 336,
-													"width": 102.349609375,
+													"width": 193.400390625,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -92677,7 +92691,7 @@
 														"$ref": "AAAAAAGhwdSpELAb/4A="
 													},
 													"edgePosition": 1,
-													"text": "10 : Recrear DTO"
+													"text": "10 : Recrear DTO con el mensaje"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -92778,9 +92792,9 @@
 														"$ref": "AAAAAAGhwdg6XrByYAc="
 													},
 													"font": "Arial;13;0",
-													"left": 1765,
+													"left": 1728,
 													"top": 372,
-													"width": 51.53662109375,
+													"width": 125.2646484375,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -92788,7 +92802,7 @@
 														"$ref": "AAAAAAGhwdg6XrBzabw="
 													},
 													"edgePosition": 1,
-													"text": "11 : DTO"
+													"text": "11 : DTOLanzarDado"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -93001,9 +93015,9 @@
 														"$ref": "AAAAAAGhwdjT/LChqLg="
 													},
 													"font": "Arial;13;0",
-													"left": 1951,
+													"left": 1921,
 													"top": 431,
-													"width": 85.2744140625,
+													"width": 144.26953125,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -93011,7 +93025,7 @@
 														"$ref": "AAAAAAGhwdjT/LCiOk4="
 													},
 													"edgePosition": 1,
-													"text": "13 : crearDTO"
+													"text": "13 : crearDTORespuesta"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -93112,9 +93126,9 @@
 														"$ref": "AAAAAAGhwdj5EbC3vDY="
 													},
 													"font": "Arial;13;0",
-													"left": 1968,
+													"left": 1902,
 													"top": 445,
-													"width": 52.50146484375,
+													"width": 185.478515625,
 													"height": 13,
 													"alpha": 1.5707963267948966,
 													"distance": 10,
@@ -93122,7 +93136,7 @@
 														"$ref": "AAAAAAGhwdj5EbC4rCU="
 													},
 													"edgePosition": 1,
-													"text": "14 : DTO"
+													"text": "14 : DTORespuestaLanzarDado"
 												},
 												{
 													"_type": "EdgeLabelView",
@@ -94214,7 +94228,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "Message1",
+									"name": "lanza dado",
 									"source": {
 										"$ref": "AAAAAAGhwcgtFa4l454="
 									},
@@ -94228,7 +94242,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "Message2",
+									"name": "solicita lanzar dado",
 									"source": {
 										"$ref": "AAAAAAGhwb6Rtaybzc4="
 									},
@@ -94242,7 +94256,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "crea DTO",
+									"name": "crea DTOLanzarDado",
 									"source": {
 										"$ref": "AAAAAAGhwb8FqKy9Z6E="
 									},
@@ -94256,7 +94270,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "DTO",
+									"name": "DTOLanzarDado",
 									"source": {
 										"$ref": "AAAAAAGhwb9wB6zhkcE="
 									},
@@ -94271,7 +94285,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "Message3",
+									"name": "serializa el DTO",
 									"source": {
 										"$ref": "AAAAAAGhwb8FqKy9Z6E="
 									},
@@ -94285,7 +94299,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "Message4",
+									"name": "prepara el objeto serializado para mandarlo",
 									"source": {
 										"$ref": "AAAAAAGhwcJEW63SNSQ="
 									},
@@ -94299,7 +94313,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "Message5",
+									"name": "envia solicitud al servidor con el DTO",
 									"source": {
 										"$ref": "AAAAAAGhwcBHs60l/0g="
 									},
@@ -94313,7 +94327,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "Message6",
+									"name": "descifra el mensaje recibido",
 									"source": {
 										"$ref": "AAAAAAGhwcCHca1G/cI="
 									},
@@ -94327,7 +94341,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "Message7",
+									"name": "manda el mensaje recibido",
 									"source": {
 										"$ref": "AAAAAAGhwcM8Lq313hc="
 									},
@@ -94341,7 +94355,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "Recrear DTO",
+									"name": "Recrear DTO con el mensaje",
 									"source": {
 										"$ref": "AAAAAAGhwcDmAq1nvDw="
 									},
@@ -94355,7 +94369,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "DTO",
+									"name": "DTOLanzarDado",
 									"source": {
 										"$ref": "AAAAAAGhwcFsDq2MLZI="
 									},
@@ -94384,7 +94398,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "crearDTO",
+									"name": "crearDTORespuesta",
 									"source": {
 										"$ref": "AAAAAAGhwcGTvK2tvCo="
 									},
@@ -94398,7 +94412,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGhwbyKG6t57fk="
 									},
-									"name": "DTO",
+									"name": "DTORespuestaLanzarDado",
 									"source": {
 										"$ref": "AAAAAAGhwcFsDq2MLZI="
 									},
