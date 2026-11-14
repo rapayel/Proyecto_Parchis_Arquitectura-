@@ -30,7 +30,8 @@ public class FachadaJuego implements IFachadaJuego {
                 res.resultadoDado(),
                 res.puedeVolverATirar(),
                 res.puedeSacarFicha(),
-                res.tieneMovimientoValido()
+                res.tieneMovimientoValido(),
+                res.idFichaRegresada()
         );
     }
 
@@ -43,8 +44,11 @@ public class FachadaJuego implements IFachadaJuego {
                 res.idFicha(),
                 res.posicionFicha(),
                 res.capturo(),
+                res.idJugadorFichaCapturada(),
+                res.idFichaCapturada(),
                 res.llegoAMeta(),
-                res.cambioTurno()
+                res.cambioTurno(),
+                res.esGanador()
         );
     }
 }

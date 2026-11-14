@@ -31,6 +31,7 @@ public class PanelTablero extends JPanel {
     private List<FichaVista> fichas;
     private ControladorJuego controlador;
     private int idJugadorHumano = 1;
+    private boolean juegoTerminado;
     private double offsetX = 0;
     private double offsetY = 0;
 
@@ -52,6 +53,10 @@ public class PanelTablero extends JPanel {
         this.controlador = controlador;
     }
 
+    public void setJuegoTerminado(boolean juegoTerminado) {
+        this.juegoTerminado = juegoTerminado;
+    }
+
     private void inicializarFichas() {
         fichas.clear();
         for (int i = 0; i < coloresJugadores.length; i++) {
@@ -69,7 +74,7 @@ public class PanelTablero extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (controlador == null) return;
+                if (controlador == null || juegoTerminado) return;
                 double mx = e.getX() - offsetX;
                 double my = e.getY() - offsetY;
                 FichaVista elegida = null;
@@ -172,7 +177,7 @@ public class PanelTablero extends JPanel {
                 double angulo = Math.toRadians((360.0 / totalEnCasa) * orden - 90);
                 f.setPosicion(cx + Math.cos(angulo) * radioDistribucion, cy + Math.sin(angulo) * radioDistribucion);
             } else { 
-                Point2D coord = calcularCoordenadaCasilla(pos, S, tamCasa, c);
+                Point2D coord = calcularCoordenadaCasilla(pos, f.getIdJugador(), S, tamCasa, c);
                 if (coord != null) {
                     f.setPosicion(coord.getX(), coord.getY());
                 }
@@ -182,20 +187,28 @@ public class PanelTablero extends JPanel {
     }
 
     private void separarFichasSuperpuestas(double c) {
-        Map<Integer, List<FichaVista>> porCasilla = new LinkedHashMap<>();
+        Map<Long, List<FichaVista>> porCasilla = new LinkedHashMap<>();
         for (FichaVista f : fichas) {
             if (f.getCasillaActual() > 0) {
-                porCasilla.computeIfAbsent(f.getCasillaActual(), k -> new ArrayList<>()).add(f);
+                int posicion = f.getCasillaActual();
+                long clave = posicion > 68 && posicion < 76
+                        ? ((long) f.getIdJugador() << 32) | posicion
+                        : posicion;
+                porCasilla.computeIfAbsent(clave, k -> new ArrayList<>()).add(f);
             }
         }
 
         double largoCasilla = c / 3.0; 
 
-        for (Map.Entry<Integer, List<FichaVista>> entrada : porCasilla.entrySet()) {
+        for (Map.Entry<Long, List<FichaVista>> entrada : porCasilla.entrySet()) {
             List<FichaVista> grupo = entrada.getValue();
             int n = grupo.size();
             if (n < 2) continue;
-            boolean horizontal = (brazoDeCasilla(entrada.getKey()) % 2 == 0);
+            FichaVista primera = grupo.get(0);
+            int posicion = primera.getCasillaActual();
+            boolean horizontal = posicion > 68 && posicion < 76
+                    ? (primera.getIdJugador() % 2 == 0)
+                    : (brazoDeCasilla(posicion) % 2 == 0);
 
             double radio = Math.min(grupo.get(0).getRadio() * 0.85, (largoCasilla * 0.9) / (2.0 * n));
             double paso = radio * 2;
@@ -239,9 +252,25 @@ public class PanelTablero extends JPanel {
         return lista;
     }
 
-    private Point2D calcularCoordenadaCasilla(int casilla, double S, double a, double c) {
+    private Point2D calcularCoordenadaCasilla(int casilla, int idJugador, double S, double a, double c) {
         double cw = c / 3.0;
         double ch = a / 8.0;
+        double cx = S / 2.0;
+        double cy = S / 2.0;
+
+        if (casilla >= 69 && casilla < 76) {
+            int k = Math.floorMod(idJugador - 1, 4);
+            int fila = 76 - casilla;
+            double localX = a + cw + cw / 2.0;
+            double localY = fila * ch + ch / 2.0;
+            double rad = k * Math.PI / 2.0;
+            double rx = cx + (localX - cx) * Math.cos(rad) - (localY - cy) * Math.sin(rad);
+            double ry = cy + (localX - cx) * Math.sin(rad) + (localY - cy) * Math.cos(rad);
+            return new Point2D.Double(rx, ry);
+        }
+        if (casilla == 76) {
+            return new Point2D.Double(cx, cy);
+        }
 
         for (int k = 0; k < 4; k++) {
             for (int r = 0; r < 8; r++) {
@@ -256,8 +285,6 @@ public class PanelTablero extends JPanel {
                     if (numCasilla == casilla) {
                         double localX = a + j * cw + cw / 2.0;
                         double localY = r * ch + ch / 2.0;
-                        double cx = S / 2.0;
-                        double cy = S / 2.0;
                         double rad = k * Math.PI / 2.0;
 
                         double rx = cx + (localX - cx) * Math.cos(rad) - (localY - cy) * Math.sin(rad);

@@ -22,6 +22,8 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
     private int idJugadorTurnoActual = 1;
     private int idJugadorUltimaJugada = -1;
     private boolean dadoLanzadoEnTurno = false;
+    private boolean juegoTerminado;
+    private int idJugadorGanador = -1;
     
     public ModeloJuego(IFachadaJuego fachadaJuego) {
         this.observadores = new ArrayList<>();
@@ -47,11 +49,15 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
 
     @Override
     public void solicitarLanzarDado(int idJugador) {
+        validarPartidaActiva();
         this.ultimoResultadoFicha = null;
 
         this.ultimoResultadoDado = fachadaJuego.lanzarDado(new LanzarDadoDTO(idJugador));
         
         if (ultimoResultadoDado != null) {
+            if (ultimoResultadoDado.getIdFichaRegresada() != -1) {
+                idJugadorUltimaJugada = idJugador;
+            }
             this.dadoLanzadoEnTurno = ultimoResultadoDado.isTieneMovimientoValido();
             if (!this.dadoLanzadoEnTurno) {
                 this.idJugadorTurnoActual = (this.idJugadorTurnoActual % 4) + 1;
@@ -62,12 +68,16 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
 
     @Override
     public void solicitarSeleccionarFicha(int idJugador, int idFicha) {
+        validarPartidaActiva();
         this.ultimoResultadoFicha = fachadaJuego.seleccionarFicha(new SeleccionarFichaDTO(idJugador, idFicha));
         
         if (ultimoResultadoFicha != null) {
             this.idJugadorUltimaJugada = idJugador;
             this.dadoLanzadoEnTurno = false;
-            if (ultimoResultadoFicha.isCambioTurno()) {
+            juegoTerminado = ultimoResultadoFicha.isGanador();
+            if (juegoTerminado) {
+                idJugadorGanador = idJugador;
+            } else if (ultimoResultadoFicha.isCambioTurno()) {
                 this.idJugadorTurnoActual = (this.idJugadorTurnoActual % 4) + 1;
             }
         }
@@ -133,5 +143,36 @@ public class ModeloJuego implements IModeloJuego, IModeloLectura {
     @Override
     public int getIdJugadorUltimaJugada() {
         return idJugadorUltimaJugada;
+    }
+
+    @Override
+    public int getIdFichaRegresada() {
+        return ultimoResultadoDado != null ? ultimoResultadoDado.getIdFichaRegresada() : -1;
+    }
+
+    @Override
+    public int getIdJugadorFichaCapturada() {
+        return ultimoResultadoFicha != null ? ultimoResultadoFicha.getIdJugadorFichaCapturada() : -1;
+    }
+
+    @Override
+    public int getIdFichaCapturada() {
+        return ultimoResultadoFicha != null ? ultimoResultadoFicha.getIdFichaCapturada() : -1;
+    }
+
+    @Override
+    public boolean isJuegoTerminado() {
+        return juegoTerminado;
+    }
+
+    @Override
+    public int getIdJugadorGanador() {
+        return idJugadorGanador;
+    }
+
+    private void validarPartidaActiva() {
+        if (juegoTerminado) {
+            throw new IllegalStateException("La partida ya terminó.");
+        }
     }
 }

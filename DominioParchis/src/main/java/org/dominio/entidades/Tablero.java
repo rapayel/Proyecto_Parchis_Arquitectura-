@@ -20,14 +20,23 @@ public class Tablero {
     private boolean dadoLanzadoEnTurno;
     private int turnosConsecutivosSeis;
     private Ficha ultimaFichaMovida;
+    private Jugador ganador;
+    private final Random random;
     private final int numeroParaSacarFicha;
     private final int casillasSegurasPorAla;
     private final int totalCasillas = 68;
     private final int limiteMetaJugador = 76;
 
     public Tablero(List<Jugador> jugadores, int numeroParaSacarFicha, int casillasSegurasPorAla) {
+        this(jugadores, numeroParaSacarFicha, casillasSegurasPorAla, new Random());
+    }
+
+    Tablero(List<Jugador> jugadores, int numeroParaSacarFicha, int casillasSegurasPorAla, Random random) {
         if (jugadores == null || jugadores.size() < 2 || jugadores.size() > 4) {
             throw new IllegalArgumentException("El tablero requiere entre 2 y 4 jugadores.");
+        }
+        if (random == null) {
+            throw new IllegalArgumentException("El generador del dado no puede ser nulo.");
         }
         if (numeroParaSacarFicha < 1 || numeroParaSacarFicha > 6) {
             throw new IllegalArgumentException("El número para sacar ficha debe estar entre 1 y 6.");
@@ -36,6 +45,7 @@ public class Tablero {
             throw new IllegalArgumentException("El número de casillas seguras debe estar entre 1 y 5.");
         }
 
+        this.random = random;
         this.numeroParaSacarFicha = numeroParaSacarFicha;
         this.casillasSegurasPorAla = casillasSegurasPorAla;
 
@@ -55,9 +65,28 @@ public class Tablero {
 
     private void inicializarCasillas() {
         for (int i = 1; i <= totalCasillas; i++) {
-            boolean esSegura = (i % (totalCasillas / 4) <= casillasSegurasPorAla);
-            casillas.add(new Casilla(i, esSegura));
+            casillas.add(new Casilla(i, esCasillaSegura(i)));
         }
+    }
+
+    private boolean esCasillaSegura(int posicion) {
+        int casillasPorJugador = totalCasillas / jugadores.size();
+        for (int i = 0; i < jugadores.size(); i++) {
+            if (posicion == i * casillasPorJugador + 1) {
+                return true;
+            }
+        }
+
+        for (int brazo = 0; brazo < 4; brazo++) {
+            for (int fila = 8 - casillasSegurasPorAla; fila < 8; fila++) {
+                int base = 35 + fila;
+                int casillaSegura = Math.floorMod(39 - base + 17 * brazo, totalCasillas) + 1;
+                if (posicion == casillaSegura) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void agregarJugador(Jugador jugador) {
@@ -70,6 +99,7 @@ public class Tablero {
     }
 
     public ResultadoLanzarDadoDominio lanzarDado(int idJugador) {
+        validarPartidaActiva();
         Jugador jugador = obtenerJugador(idJugador);
         validarTurno(jugador);
 
@@ -77,7 +107,7 @@ public class Tablero {
             throw new IllegalStateException("Ya lanzaste el dado en este turno.");
         }
 
-        resultadoDado = new Random().nextInt(6) + 1;
+        resultadoDado = random.nextInt(6) + 1;
         dadoLanzadoEnTurno = true;
 
         if (resultadoDado == 6) {
@@ -86,8 +116,10 @@ public class Tablero {
             turnosConsecutivosSeis = 0;
         }
 
+        int idFichaRegresada = -1;
         if (turnosConsecutivosSeis == 3) {
             if (ultimaFichaMovida != null && !ultimaFichaMovida.estaEnMeta()) {
+                idFichaRegresada = ultimaFichaMovida.getId();
                 int posOriginal = ultimaFichaMovida.getPosicion();
                 if (posOriginal > 0 && posOriginal <= totalCasillas) {
                     casillas.get(posOriginal - 1).retirarFicha(ultimaFichaMovida);
@@ -95,14 +127,25 @@ public class Tablero {
                 ultimaFichaMovida.regresarASalida();
             }
             cambiarTurno();
-            return new ResultadoLanzarDadoDominio(jugador.getId(), resultadoDado, false, false, false);
+            return new ResultadoLanzarDadoDominio(
+                    jugador.getId(), resultadoDado, false, false, false, idFichaRegresada);
         }
 
-        boolean puedeVolverATirar = (resultadoDado == 6);
-        boolean puedeSacarFicha = (resultadoDado == numeroParaSacarFicha) && jugador.tieneFichasEnSalida();
-        boolean tieneFichasEnJuego = jugador.tieneFichaEnJuego();
-
-        boolean tieneMovimientoValido = tieneFichasEnJuego || puedeSacarFicha;
+        boolean puedeSacarFicha = resultadoDado == numeroParaSacarFicha
+                && jugador.tieneFichasEnSalida()
+                && puedeAterrizarEnSalida(jugador);
+        boolean tieneMovimientoValido = puedeSacarFicha;
+        if (!tieneMovimientoValido) {
+            for (Ficha ficha : jugador.getFichas()) {
+                if (ficha.estaEnJuego() && puedeMover(ficha, resultadoDado, jugador, true)) {
+                    tieneMovimientoValido = true;
+                    break;
+                }
+            }
+        }
+        boolean puedeVolverATirar = resultadoDado == 6
+                && turnosConsecutivosSeis < 3
+                && tieneMovimientoValido;
         if (!tieneMovimientoValido) {
             cambiarTurno();
         }
@@ -112,11 +155,13 @@ public class Tablero {
                 resultadoDado,
                 puedeVolverATirar,
                 puedeSacarFicha,
-                tieneMovimientoValido
+                tieneMovimientoValido,
+                -1
         );
     }
 
     public ResultadoSeleccionarFichaDominio seleccionarFicha(int idJugador, int idFicha) {
+        validarPartidaActiva();
         Jugador jugador = obtenerJugador(idJugador);
         validarTurno(jugador);
 
@@ -129,7 +174,7 @@ public class Tablero {
             throw new IllegalArgumentException("La ficha no pertenece al jugador.");
         }
 
-        boolean capturo = false;
+        Ficha fichaCapturada = null;
         boolean llegoAMeta = false;
 
         int casillaSalidaJugador = obtenerCasillaSalidaJugador(jugador);
@@ -138,29 +183,23 @@ public class Tablero {
             if (resultadoDado != numeroParaSacarFicha) {
                 throw new IllegalStateException("Se necesita obtener " + numeroParaSacarFicha + " para sacar la ficha.");
             }
+            Casilla casillaSalida = casillas.get(casillaSalidaJugador - 1);
+            if (!puedeAterrizar(casillaSalida, jugador, true)) {
+                throw new IllegalStateException("La casilla de salida no admite otra ficha.");
+            }
+            fichaCapturada = capturarRival(casillaSalida, jugador);
             ficha.sacarAlTablero(casillaSalidaJugador);
-            casillas.get(casillaSalidaJugador - 1).agregarFicha(ficha);
+            casillaSalida.agregarFicha(ficha);
         } else {
-            moverFichaEnTablero(ficha, resultadoDado, jugador);
+            if (!ficha.estaEnJuego() || !puedeMover(ficha, resultadoDado, jugador, true)) {
+                throw new IllegalStateException("La ficha no puede realizar este movimiento.");
+            }
+            fichaCapturada = moverFichaEnTablero(ficha, resultadoDado, jugador, true);
             
             if (ficha.estaEnMeta()) {
                 llegoAMeta = true;
-            } else {
-                int posDestino = ficha.getPosicion();
-                if (posDestino > 0 && posDestino <= totalCasillas) {
-                    Casilla casillaDestino = casillas.get(posDestino - 1);
-
-                    if (casillaDestino.estaOcupada() && casillaDestino.tieneFichaRival(jugador)) {
-                        if (!casillaDestino.estaSegura()) {
-                            Ficha fichaRival = casillaDestino.obtenerFichaRival(jugador);
-                            casillaDestino.retirarFicha(fichaRival);
-                            fichaRival.regresarASalida();
-                            capturo = true;
-                            
-                            moverFichaEnTablero(ficha, 20, jugador);
-                        }
-                    }
-                }
+            } else if (fichaCapturada != null && puedeMover(ficha, 20, jugador, false)) {
+                moverFichaEnTablero(ficha, 20, jugador, false);
             }
         }
 
@@ -168,15 +207,20 @@ public class Tablero {
 
         if (llegoAMeta && jugador.tieneFichaEnJuego()) {
             Ficha otraFicha = jugador.obtenerFichaEnJuegoDistintaDe(ficha);
-            if (otraFicha != null) {
-                moverFichaEnTablero(otraFicha, 10, jugador);
+            if (otraFicha != null && puedeMover(otraFicha, 10, jugador, false)) {
+                moverFichaEnTablero(otraFicha, 10, jugador, false);
             }
         }
 
         boolean esGanador = jugador.todasLlegaronAMeta();
+        boolean capturo = fichaCapturada != null;
 
         boolean cambioTurno = !puedeVolverATirar() || esGanador;
-        if (cambioTurno) {
+        if (esGanador) {
+            ganador = jugador;
+            dadoLanzadoEnTurno = false;
+            turnosConsecutivosSeis = 0;
+        } else if (cambioTurno) {
             cambiarTurno();
         } else {
             dadoLanzadoEnTurno = false;
@@ -187,31 +231,84 @@ public class Tablero {
                 ficha.getId(),
                 ficha.getPosicion(),
                 capturo,
+                capturo ? fichaCapturada.getJugador().getId() : -1,
+                capturo ? fichaCapturada.getId() : -1,
                 llegoAMeta,
-                cambioTurno
+                cambioTurno,
+                esGanador
         );
     }
 
-    private void moverFichaEnTablero(Ficha ficha, int pasos, Jugador jugador) {
+    private void validarPartidaActiva() {
+        if (ganador != null) {
+            throw new IllegalStateException("La partida ya terminó.");
+        }
+    }
+
+    private Ficha moverFichaEnTablero(Ficha ficha, int pasos, Jugador jugador, boolean puedeCapturar) {
+        if (!puedeMover(ficha, pasos, jugador, puedeCapturar)) {
+            throw new IllegalStateException("La ficha no puede realizar este movimiento.");
+        }
+
         int posOrigen = ficha.getPosicion();
+        int posDestino = ficha.calcularPosicionDespuesDeAvanzar(pasos, limiteMetaJugador);
+        Casilla casillaDestino = posDestino > 0 && posDestino <= totalCasillas
+                ? casillas.get(posDestino - 1)
+                : null;
+        Ficha fichaCapturada = puedeCapturar && casillaDestino != null
+                ? capturarRival(casillaDestino, jugador)
+                : null;
+
         if (posOrigen > 0 && posOrigen <= totalCasillas) {
             casillas.get(posOrigen - 1).retirarFicha(ficha);
         }
 
         ficha.avanzarORebotar(pasos, limiteMetaJugador);
 
-        int posDestino = ficha.getPosicion();
-        if (posDestino > 0 && posDestino <= totalCasillas) {
-            Casilla casillaDestino = casillas.get(posDestino - 1);
-            if (casillaDestino.formaBarrera()) {
-                ficha.setPosicion(posOrigen);
-                if (posOrigen > 0 && posOrigen <= totalCasillas) {
-                    casillas.get(posOrigen - 1).agregarFicha(ficha);
-                }
-                throw new IllegalStateException("La casilla destino (" + posDestino + ") tiene una barrera.");
-            }
+        if (casillaDestino != null) {
             casillaDestino.agregarFicha(ficha);
         }
+        return fichaCapturada;
+    }
+
+    private boolean puedeMover(Ficha ficha, int pasos, Jugador jugador, boolean puedeCapturar) {
+        if (!ficha.estaEnJuego()) {
+            return false;
+        }
+
+        int posDestino = ficha.calcularPosicionDespuesDeAvanzar(pasos, limiteMetaJugador);
+        if (posDestino > totalCasillas) {
+            return true;
+        }
+        return puedeAterrizar(casillas.get(posDestino - 1), jugador, puedeCapturar);
+    }
+
+    private boolean puedeAterrizarEnSalida(Jugador jugador) {
+        int casillaSalida = obtenerCasillaSalidaJugador(jugador);
+        return puedeAterrizar(casillas.get(casillaSalida - 1), jugador, true);
+    }
+
+    private boolean puedeAterrizar(Casilla casilla, Jugador jugador, boolean puedeCapturar) {
+        if (casilla.formaBarrera()) {
+            return false;
+        }
+        if (!casilla.estaSegura() && casilla.tieneFichaRival(jugador)) {
+            return puedeCapturar;
+        }
+        return casilla.tieneEspacio();
+    }
+
+    private Ficha capturarRival(Casilla casilla, Jugador jugador) {
+        if (casilla.estaSegura()) {
+            return null;
+        }
+        Ficha fichaRival = casilla.obtenerFichaRival(jugador);
+        if (fichaRival == null) {
+            return null;
+        }
+        casilla.retirarFicha(fichaRival);
+        fichaRival.regresarASalida();
+        return fichaRival;
     }
 
     private void cambiarTurno() {
@@ -245,8 +342,10 @@ public class Tablero {
     }
 
     public static record ResultadoLanzarDadoDominio(
-            int idJugador, int resultadoDado, boolean puedeVolverATirar, boolean puedeSacarFicha, boolean tieneMovimientoValido) {}
+            int idJugador, int resultadoDado, boolean puedeVolverATirar, boolean puedeSacarFicha,
+            boolean tieneMovimientoValido, int idFichaRegresada) {}
 
     public static record ResultadoSeleccionarFichaDominio(
-            int idJugador, int idFicha, int posicionFicha, boolean capturo, boolean llegoAMeta, boolean cambioTurno) {}
+            int idJugador, int idFicha, int posicionFicha, boolean capturo, int idJugadorFichaCapturada,
+            int idFichaCapturada, boolean llegoAMeta, boolean cambioTurno, boolean esGanador) {}
 }

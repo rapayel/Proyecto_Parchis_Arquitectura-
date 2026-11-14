@@ -98,7 +98,7 @@ public class MainJuego {
             Scanner scanner = new Scanner(System.in);
             System.out.println("\n=== TERMINAL DE PARCHÍS ACTIVA (JUGADORES 2, 3 Y 4) ===");
 
-            while (true) {
+            while (!modelo.isJuegoTerminado()) {
                 try {
                     Thread.sleep(400);
                 } catch (InterruptedException e) {

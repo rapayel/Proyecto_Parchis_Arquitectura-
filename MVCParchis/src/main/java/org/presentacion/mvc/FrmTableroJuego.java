@@ -12,6 +12,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.presentacion.interfaces.IModeloLectura;
 import org.presentacion.interfaces.Observador;
@@ -29,6 +30,7 @@ public class FrmTableroJuego extends JFrame implements Observador {
     private PanelControles panelControles;
     private PanelJugador[] panelesJugadores;
     private final int idJugadorHumano = 1;
+    private boolean mensajeGanadorMostrado;
 
     public FrmTableroJuego(
             ControladorJuego controlador, 
@@ -94,14 +96,34 @@ public class FrmTableroJuego extends JFrame implements Observador {
         }
         
         boolean esTurnoJugadorHumano = (turnoActual == idJugadorHumano);
-        boolean puedeLanzar = esTurnoJugadorHumano && !modelo.isDadoLanzadoEnTurno();
+        boolean puedeLanzar = esTurnoJugadorHumano
+                && !modelo.isDadoLanzadoEnTurno()
+                && !modelo.isJuegoTerminado();
         panelControles.setHabilitarBotonLanzar(puedeLanzar);
 
+        int idFichaRegresada = modelo.getIdFichaRegresada();
+        if (idFichaRegresada != -1) {
+            panelTablero.moverFicha(modelo.getIdJugadorUltimaJugada(), idFichaRegresada, -1);
+        }
+        int idFichaCapturada = modelo.getIdFichaCapturada();
+        if (idFichaCapturada != -1) {
+            panelTablero.moverFicha(modelo.getIdJugadorFichaCapturada(), idFichaCapturada, -1);
+        }
         if (modelo.getIdFichaSeleccionada() != -1) {
             panelTablero.moverFicha(
                 modelo.getIdJugadorUltimaJugada(),
                 modelo.getIdFichaSeleccionada(),
                 modelo.getPosicionFicha()
+            );
+        }
+        panelTablero.setJuegoTerminado(modelo.isJuegoTerminado());
+        if (modelo.isJuegoTerminado() && !mensajeGanadorMostrado) {
+            mensajeGanadorMostrado = true;
+            JOptionPane.showMessageDialog(
+                    this,
+                    "¡El jugador " + modelo.getIdJugadorGanador() + " ganó la partida!",
+                    "Fin de la partida",
+                    JOptionPane.INFORMATION_MESSAGE
             );
         }
         panelTablero.repaint();

@@ -5,6 +5,7 @@
 package org.dominio.entidades;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,6 +51,10 @@ public class Jugador {
             }
         }
         return null;
+    }
+
+    public List<Ficha> getFichas() {
+        return Collections.unmodifiableList(fichas);
     }
 
     public Ficha obtenerFichaEnJuegoDistintaDe(Ficha fichaExcluida) {

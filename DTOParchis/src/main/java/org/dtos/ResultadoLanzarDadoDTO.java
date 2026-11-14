@@ -15,6 +15,7 @@ public class ResultadoLanzarDadoDTO implements IDTO {
     private boolean puedeVolverATirar;
     private boolean puedeSacarFicha;
     private boolean tieneMovimientoValido;
+    private int idFichaRegresada;
 
     public ResultadoLanzarDadoDTO(
             int idJugador,
@@ -22,12 +23,23 @@ public class ResultadoLanzarDadoDTO implements IDTO {
             boolean puedeVolverATirar,
             boolean puedeSacarFicha,
             boolean tieneMovimientoValido) {
+        this(idJugador, resultadoDado, puedeVolverATirar, puedeSacarFicha, tieneMovimientoValido, -1);
+    }
+
+    public ResultadoLanzarDadoDTO(
+            int idJugador,
+            int resultadoDado,
+            boolean puedeVolverATirar,
+            boolean puedeSacarFicha,
+            boolean tieneMovimientoValido,
+            int idFichaRegresada) {
 
         this.idJugador = idJugador;
         this.resultadoDado = resultadoDado;
         this.puedeVolverATirar = puedeVolverATirar;
         this.puedeSacarFicha = puedeSacarFicha;
         this.tieneMovimientoValido = tieneMovimientoValido;
+        this.idFichaRegresada = idFichaRegresada;
     }
 
     public int getIdJugador() {
@@ -48,5 +60,9 @@ public class ResultadoLanzarDadoDTO implements IDTO {
 
     public boolean isTieneMovimientoValido() {
         return tieneMovimientoValido;
+    }
+
+    public int getIdFichaRegresada() {
+        return idFichaRegresada;
     }
 }

@@ -12,12 +12,16 @@ public class Ficha {
     private int id;
     private Jugador jugador;
     private int posicion;
+    private int progreso;
+    private int casillaSalida;
     private Estado estado;
 
     public Ficha(int id, Jugador jugador) {
         this.id = id;
         this.jugador = jugador;
         this.posicion = -1;
+        this.progreso = 0;
+        this.casillaSalida = -1;
         this.estado = Estado.SALIDA;
     }
 
@@ -25,6 +29,11 @@ public class Ficha {
         if (estado != Estado.SALIDA) {
             throw new IllegalStateException("La ficha no se encuentra en la salida.");
         }
+        if (casillaSalida < 1 || casillaSalida > 68) {
+            throw new IllegalArgumentException("La casilla de salida no pertenece al circuito.");
+        }
+        this.casillaSalida = casillaSalida;
+        progreso = 1;
         estado = Estado.EN_JUEGO;
         posicion = casillaSalida;
     }
@@ -34,24 +43,41 @@ public class Ficha {
             throw new IllegalStateException("La ficha no se puede mover en este estado.");
         }
 
-        int nuevaPosicion = posicion + cantidad;
+        progreso = calcularProgresoDespuesDeAvanzar(cantidad, limiteMeta);
+        posicion = posicionParaProgreso(progreso, limiteMeta);
 
-        if (nuevaPosicion == limiteMeta) {
-            setPosicion(limiteMeta);
+        if (progreso == limiteMeta) {
             estado = Estado.META;
             return true;
-        } else if (nuevaPosicion > limiteMeta) {
-            int exceso = nuevaPosicion - limiteMeta;
-            setPosicion(limiteMeta - exceso);
-            return false;
-        } else {
-            setPosicion(nuevaPosicion);
-            return false;
         }
+
+        estado = progreso > 68 ? Estado.PASILLO_FINAL : Estado.EN_JUEGO;
+        return false;
+    }
+
+    int calcularPosicionDespuesDeAvanzar(int cantidad, int limiteMeta) {
+        return posicionParaProgreso(calcularProgresoDespuesDeAvanzar(cantidad, limiteMeta), limiteMeta);
+    }
+
+    private int calcularProgresoDespuesDeAvanzar(int cantidad, int limiteMeta) {
+        int nuevoProgreso = progreso + cantidad;
+        if (nuevoProgreso > limiteMeta) {
+            nuevoProgreso = limiteMeta - (nuevoProgreso - limiteMeta);
+        }
+        return nuevoProgreso;
+    }
+
+    private int posicionParaProgreso(int progreso, int limiteMeta) {
+        if (progreso > 68 || progreso == limiteMeta) {
+            return progreso;
+        }
+        return Math.floorMod(casillaSalida + progreso - 2, 68) + 1;
     }
 
     public void regresarASalida() {
-        setPosicion(-1);
+        posicion = -1;
+        progreso = 0;
+        casillaSalida = -1;
         estado = Estado.SALIDA;
     }
 
@@ -60,7 +86,7 @@ public class Ficha {
     }
 
     public boolean estaEnJuego() {
-        return estado == Estado.EN_JUEGO;
+        return estado == Estado.EN_JUEGO || estado == Estado.PASILLO_FINAL;
     }
 
     public boolean estaEnMeta() {
@@ -81,10 +107,6 @@ public class Ficha {
 
     public int getPosicion() {
         return posicion;
-    }
-
-    public void setPosicion(int posicion) {
-        this.posicion = posicion;
     }
 
     public Estado getEstado() {

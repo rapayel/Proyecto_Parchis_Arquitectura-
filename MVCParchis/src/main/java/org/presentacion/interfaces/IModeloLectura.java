@@ -27,4 +27,9 @@ public interface IModeloLectura {
     int getIdJugadorTurnoActual();
     boolean isDadoLanzadoEnTurno();
     int getIdJugadorUltimaJugada();
+    int getIdFichaRegresada();
+    int getIdJugadorFichaCapturada();
+    int getIdFichaCapturada();
+    boolean isJuegoTerminado();
+    int getIdJugadorGanador();
 }
