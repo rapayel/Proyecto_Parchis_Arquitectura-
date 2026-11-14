@@ -4,13 +4,11 @@
  */
 package org.dtos;
 
-import java.io.Serializable;
-
 /**
  * 
  * @author Equipo 1
  */
-public class LanzarDadoDTO implements Serializable{
+public class LanzarDadoDTO implements IDTO {
     private static final long serialVersionUID = 1L;
     private int idJugador;
 

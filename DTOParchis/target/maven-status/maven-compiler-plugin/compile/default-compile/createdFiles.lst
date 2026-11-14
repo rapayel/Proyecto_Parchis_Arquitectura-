@@ -1,4 +1,5 @@
 org\dtos\ResultadoLanzarDadoDTO.class
 org\dtos\SeleccionarFichaDTO.class
 org\dtos\ResultadoSeleccionarFichaDTO.class
+org\dtos\IDTO.class
 org\dtos\LanzarDadoDTO.class
