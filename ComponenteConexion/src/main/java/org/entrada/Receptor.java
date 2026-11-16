@@ -26,6 +26,6 @@ public class Receptor implements Observer {
         }
 
         System.out.println("[Receptor] Bytes recibidos desde el mecanismo de entrada.");
-        receptorExterno.recibir(contexto.getBytes());
+        receptorExterno.recibir(contexto.getIdJugador(), contexto.getBytes());
     }
 }

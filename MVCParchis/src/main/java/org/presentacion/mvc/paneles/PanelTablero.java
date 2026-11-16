@@ -28,10 +28,12 @@ public class PanelTablero extends JPanel {
     private final int casillasSegurasPorAla;
     private final int numeroSalidaDado;
 
+    private int numeroJugadores = 4;
     private List<FichaVista> fichas;
     private ControladorJuego controlador;
     private int idJugadorHumano = 1;
     private boolean juegoTerminado;
+    private boolean accionesHabilitadas;
     private double offsetX = 0;
     private double offsetY = 0;
 
@@ -57,9 +59,28 @@ public class PanelTablero extends JPanel {
         this.juegoTerminado = juegoTerminado;
     }
 
+    public void setIdJugadorHumano(int idJugadorHumano) {
+        this.idJugadorHumano = idJugadorHumano;
+    }
+
+    public void setAccionesHabilitadas(boolean accionesHabilitadas) {
+        this.accionesHabilitadas = accionesHabilitadas;
+    }
+
+    public void setNumeroJugadores(int numeroJugadores) {
+        if (numeroJugadores < 2 || numeroJugadores > coloresJugadores.length) {
+            throw new IllegalArgumentException("La cantidad de jugadores debe estar entre 2 y 4.");
+        }
+        if (this.numeroJugadores != numeroJugadores) {
+            this.numeroJugadores = numeroJugadores;
+            inicializarFichas();
+            repaint();
+        }
+    }
+
     private void inicializarFichas() {
         fichas.clear();
-        for (int i = 0; i < coloresJugadores.length; i++) {
+        for (int i = 0; i < numeroJugadores; i++) {
             int idJugador = i + 1;
             int baseFichaId = idJugador * 10; 
             for (int f = 1; f <= fichasPorJugador; f++) {
@@ -74,7 +95,7 @@ public class PanelTablero extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (controlador == null || juegoTerminado) return;
+                if (controlador == null || juegoTerminado || !accionesHabilitadas) return;
                 double mx = e.getX() - offsetX;
                 double my = e.getY() - offsetY;
                 FichaVista elegida = null;
@@ -92,7 +113,7 @@ public class PanelTablero extends JPanel {
                 if (elegida != null) {
                     try {
                         int id = elegida.getIdFicha();
-                        controlador.seleccionarFicha(idJugadorHumano, id);
+                        controlador.seleccionarFicha(id);
                     } catch (Exception ex) {
                         System.out.println("Jugada no válida: " + ex.getMessage());
                     }
@@ -311,11 +332,14 @@ public class PanelTablero extends JPanel {
                 double y = r * ch;
  
                 boolean carril = (j == 1 && r >= 1);
-                boolean salida = (j == 0 && r == 4);
+                int base = (j == 0) ? 35 + r : (j == 1 ? 34 : 33 - r);
+                int numero = numeroCasilla(base, k);
+                int idJugadorSalida = jugadorDeSalidaEn(numero);
+                boolean salida = idJugadorSalida != -1;
                 boolean esSeguraConfigurada = (j == 0 && r >= (8 - casillasSegurasPorAla));
 
                 if (carril || salida) {
-                    g.setColor(color);
+                    g.setColor(salida ? coloresJugadores[idJugadorSalida] : color);
                 } else if (esSeguraConfigurada) {
                     g.setColor(new Color(210, 210, 210));
                 } else {
@@ -328,14 +352,23 @@ public class PanelTablero extends JPanel {
                 g.draw(new Rectangle2D.Double(x, y, cw, ch));
  
                 if (salida) {
-                    dibujarNumero(g, "S:" + numeroSalidaDado, x + cw / 2, y + ch / 2, k, fuente);
+                    dibujarNumero(g, "S:" + numeroSalidaDado, x + cw / 2, y + ch / 2,
+                            k, fuente);
                 } else if (MOSTRAR_NUMEROS && !carril) {
-                    int base = (j == 0) ? 35 + r : (j == 1 ? 34 : 33 - r);
-                    int numero = numeroCasilla(base, k); // NUEVO
                     dibujarNumero(g, String.valueOf(numero), x + cw / 2, y + ch / 2, k, fuente);
                 }
             }
         }
+    }
+
+    private int jugadorDeSalidaEn(int casilla) {
+        int casillasPorJugador = 68 / numeroJugadores;
+        for (int i = 0; i < numeroJugadores; i++) {
+            if (casilla == i * casillasPorJugador + 1) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void dibujarNumero(Graphics2D g, String txt, double cx, double cy, int k, Font f) {

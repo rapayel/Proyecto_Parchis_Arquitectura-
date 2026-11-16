@@ -1,15 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>Itson</groupId>
-        <artifactId>DominioSuscriptor</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
+    <groupId>org.interpretador</groupId>
     <artifactId>InterpretadorCliente</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>26</maven.compiler.release>
+        <exec.mainClass>org.interpretador.interpretadorcliente.InterpretadorCliente</exec.mainClass>
     </properties>
-    <name>InterpretadorCliente</name>
+    <dependencies>
+        <dependency>
+            <groupId>org.dtos</groupId>
+            <artifactId>DTOParchis</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>Itson</groupId>
+            <artifactId>ComponenteConexion</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mvc</groupId>
+            <artifactId>MVCParchis</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

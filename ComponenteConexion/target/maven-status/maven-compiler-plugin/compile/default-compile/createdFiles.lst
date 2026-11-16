@@ -4,6 +4,8 @@ org\salida\ClienteTCP.class
 org\comunes\ContextoConexion.class
 org\comunes\Subject.class
 org\salida\IDispatcher.class
+org\salida\ConexionClienteTCP.class
+org\entrada\ServidorTCP$ClienteConectado.class
 org\salida\Dispatcher.class
 org\entrada\IReceptorExterno.class
 org\entrada\Receptor.class

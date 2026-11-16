@@ -9,5 +9,5 @@ package org.entrada;
  * @author Equipo 1
  */
 public interface IReceptorExterno {
-    void recibir(byte[] bytes);
+    void recibir(int idJugador, byte[] bytes);
 }

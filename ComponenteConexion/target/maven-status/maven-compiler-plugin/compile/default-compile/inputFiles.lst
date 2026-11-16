@@ -5,6 +5,7 @@ C:\Users\lagar\OneDrive\Documentos\GitHub\Proyecto_Parchis_Arquitectura-\Compone
 C:\Users\lagar\OneDrive\Documentos\GitHub\Proyecto_Parchis_Arquitectura-\ComponenteConexion\src\main\java\org\entrada\Receptor.java
 C:\Users\lagar\OneDrive\Documentos\GitHub\Proyecto_Parchis_Arquitectura-\ComponenteConexion\src\main\java\org\entrada\ServidorTCP.java
 C:\Users\lagar\OneDrive\Documentos\GitHub\Proyecto_Parchis_Arquitectura-\ComponenteConexion\src\main\java\org\salida\ClienteTCP.java
+C:\Users\lagar\OneDrive\Documentos\GitHub\Proyecto_Parchis_Arquitectura-\ComponenteConexion\src\main\java\org\salida\ConexionClienteTCP.java
 C:\Users\lagar\OneDrive\Documentos\GitHub\Proyecto_Parchis_Arquitectura-\ComponenteConexion\src\main\java\org\salida\Dispatcher.java
 C:\Users\lagar\OneDrive\Documentos\GitHub\Proyecto_Parchis_Arquitectura-\ComponenteConexion\src\main\java\org\salida\DispatcherFactory.java
 C:\Users\lagar\OneDrive\Documentos\GitHub\Proyecto_Parchis_Arquitectura-\ComponenteConexion\src\main\java\org\salida\IDispatcher.java

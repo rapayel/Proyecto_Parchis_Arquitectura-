@@ -32,4 +32,12 @@ public interface IModeloLectura {
     int getIdFichaCapturada();
     boolean isJuegoTerminado();
     int getIdJugadorGanador();
+    int getIdJugadorLocal();
+    int getNumeroJugadores();
+    boolean isPartidaIniciada();
+    boolean isConexionActiva();
+    boolean isSolicitudPendiente();
+    String getMensajeEstado();
+    String getMensajeError();
+    long getVersionMensajeError();
 }

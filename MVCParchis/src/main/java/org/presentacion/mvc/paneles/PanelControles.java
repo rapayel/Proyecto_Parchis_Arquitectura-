@@ -15,6 +15,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.presentacion.mvc.ControladorJuego;
 
@@ -26,11 +27,10 @@ public class PanelControles extends JPanel {
     private JButton btnLanzarDado;
     private ControladorJuego controlador;
     private ComponenteDado componenteDado;
-    private int idJugadorPropietario; 
+    private final JLabel etiquetaEstado;
 
-    public PanelControles(ControladorJuego controlador, int idJugadorPropietario) {
+    public PanelControles(ControladorJuego controlador) {
         this.controlador = controlador;
-        this.idJugadorPropietario = idJugadorPropietario;
 
         setLayout(new BorderLayout(15, 15));
         setOpaque(false);
@@ -72,10 +72,11 @@ public class PanelControles extends JPanel {
         btnLanzarDado.setBorderPainted(false);
         btnLanzarDado.setFocusPainted(false);
         btnLanzarDado.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnLanzarDado.setEnabled(false);
 
         btnLanzarDado.addActionListener(e -> {
             if (this.controlador != null) {
-                this.controlador.lanzarDado(this.idJugadorPropietario);
+                this.controlador.lanzarDado();
             }
         });
 
@@ -83,11 +84,13 @@ public class PanelControles extends JPanel {
         panelBoton.setOpaque(false);
         panelBoton.add(btnLanzarDado);
 
-        this.add(panelBoton, BorderLayout.SOUTH);
-    }
-
-    public void setIdJugadorPropietario(int idJugadorPropietario) {
-        this.idJugadorPropietario = idJugadorPropietario;
+        JPanel panelInferior = new JPanel(new BorderLayout());
+        panelInferior.setOpaque(false);
+        etiquetaEstado = new JLabel("Conectando con el servidor...");
+        etiquetaEstado.setHorizontalAlignment(JLabel.CENTER);
+        panelInferior.add(etiquetaEstado, BorderLayout.NORTH);
+        panelInferior.add(panelBoton, BorderLayout.SOUTH);
+        this.add(panelInferior, BorderLayout.SOUTH);
     }
 
     public void setHabilitarBotonLanzar(boolean habilitar) {
@@ -96,6 +99,10 @@ public class PanelControles extends JPanel {
 
     public void setCaraDado(int cara) {
         componenteDado.setCara(cara);
+    }
+
+    public void setEstado(String estado) {
+        etiquetaEstado.setText(estado);
     }
 
     private class ComponenteDado extends JPanel {

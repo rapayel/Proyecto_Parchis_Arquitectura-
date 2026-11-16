@@ -13,11 +13,17 @@ public class ContextoConexion {
     private final String host;
     private final int puerto;
     private final byte[] bytes;
+    private final int idJugador;
 
     public ContextoConexion(String host, int puerto, byte[] bytes) {
+        this(host, puerto, bytes, -1);
+    }
+
+    public ContextoConexion(String host, int puerto, byte[] bytes, int idJugador) {
         this.host = host;
         this.puerto = puerto;
         this.bytes = bytes;
+        this.idJugador = idJugador;
     }
 
     public String getHost() {
@@ -30,5 +36,9 @@ public class ContextoConexion {
 
     public byte[] getBytes() {
         return bytes;
+    }
+
+    public int getIdJugador() {
+        return idJugador;
     }
 }

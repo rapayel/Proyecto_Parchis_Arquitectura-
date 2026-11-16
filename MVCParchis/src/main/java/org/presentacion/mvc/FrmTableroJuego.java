@@ -29,8 +29,9 @@ public class FrmTableroJuego extends JFrame implements Observador {
     private PanelTablero panelTablero;
     private PanelControles panelControles;
     private PanelJugador[] panelesJugadores;
-    private final int idJugadorHumano = 1;
+    private int idJugadorHumano = -1;
     private boolean mensajeGanadorMostrado;
+    private long versionMensajeErrorMostrada;
 
     public FrmTableroJuego(
             ControladorJuego controlador, 
@@ -45,11 +46,10 @@ public class FrmTableroJuego extends JFrame implements Observador {
         this.panelesJugadores = panelesJugadores;
 
         this.panelTablero.setControlador(controlador);
-        this.panelControles.setIdJugadorPropietario(idJugadorHumano);
 
         modelo.registrarObservador(this);
 
-        this.setTitle("Juego de Parchís - Jugador 1");
+        this.setTitle("Juego de Parchís");
         
         PanelFondo panelPrincipal = new PanelFondo("/fondoparchis.png");
         panelPrincipal.setLayout(new BorderLayout(5, 5));
@@ -84,6 +84,17 @@ public class FrmTableroJuego extends JFrame implements Observador {
     }
 
     private void actualizarVistaPrivado(IModeloLectura modelo) {
+        if (modelo.getIdJugadorLocal() > 0) {
+            idJugadorHumano = modelo.getIdJugadorLocal();
+            panelTablero.setIdJugadorHumano(idJugadorHumano);
+            setTitle("Juego de Parchís - Jugador " + idJugadorHumano);
+        }
+        if (modelo.getNumeroJugadores() > 0) {
+            panelTablero.setNumeroJugadores(modelo.getNumeroJugadores());
+            for (int i = 0; i < panelesJugadores.length; i++) {
+                panelesJugadores[i].setVisible(i < modelo.getNumeroJugadores());
+            }
+        }
         int turnoActual = modelo.getIdJugadorTurnoActual();
 
         for (PanelJugador pj : panelesJugadores) {
@@ -95,11 +106,21 @@ public class FrmTableroJuego extends JFrame implements Observador {
             panelControles.setCaraDado(valorDado);
         }
         
-        boolean esTurnoJugadorHumano = (turnoActual == idJugadorHumano);
+        boolean esTurnoJugadorHumano = idJugadorHumano > 0 && turnoActual == idJugadorHumano;
         boolean puedeLanzar = esTurnoJugadorHumano
                 && !modelo.isDadoLanzadoEnTurno()
+                && !modelo.isSolicitudPendiente()
+                && modelo.isPartidaIniciada()
+                && modelo.isConexionActiva()
                 && !modelo.isJuegoTerminado();
         panelControles.setHabilitarBotonLanzar(puedeLanzar);
+        panelControles.setEstado(modelo.getMensajeEstado());
+        panelTablero.setAccionesHabilitadas(
+                esTurnoJugadorHumano
+                && modelo.isDadoLanzadoEnTurno()
+                && !modelo.isSolicitudPendiente()
+                && modelo.isConexionActiva()
+                && !modelo.isJuegoTerminado());
 
         int idFichaRegresada = modelo.getIdFichaRegresada();
         if (idFichaRegresada != -1) {
@@ -124,6 +145,15 @@ public class FrmTableroJuego extends JFrame implements Observador {
                     "¡El jugador " + modelo.getIdJugadorGanador() + " ganó la partida!",
                     "Fin de la partida",
                     JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+        if (modelo.getVersionMensajeError() > versionMensajeErrorMostrada) {
+            versionMensajeErrorMostrada = modelo.getVersionMensajeError();
+            JOptionPane.showMessageDialog(
+                    this,
+                    modelo.getMensajeError(),
+                    "Aviso",
+                    JOptionPane.WARNING_MESSAGE
             );
         }
         panelTablero.repaint();

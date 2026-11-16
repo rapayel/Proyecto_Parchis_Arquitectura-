@@ -4,7 +4,7 @@ org\presentacion\mvc\paneles\FichaVista.class
 org\presentacion\mvc\paneles\PanelControles$1.class
 org\presentacion\mvc\FrmTableroJuego.class
 org\presentacion\mvc\MainJuego.class
-org\presentacion\interfaces\IModeloJuego.class
+org\presentacion\interfaces\IInterpretadorCliente.class
 org\presentacion\mvc\ControladorJuego.class
 org\presentacion\mvc\paneles\PanelTablero$1.class
 org\presentacion\interfaces\Observador.class

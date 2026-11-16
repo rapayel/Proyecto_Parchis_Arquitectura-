@@ -1,178 +1,281 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package org.presentacion.mvc;
 
-import java.util.ArrayList;
 import java.util.List;
-import org.presentacion.interfaces.*;
-import org.dominio.fachada.IFachadaJuego;
-import org.dtos.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.SwingUtilities;
+import org.dtos.AsignacionJugadorDTO;
+import org.dtos.ErrorJuegoDTO;
+import org.dtos.IDTO;
+import org.dtos.ResultadoLanzarDadoDTO;
+import org.dtos.ResultadoSeleccionarFichaDTO;
+import org.presentacion.interfaces.IModeloLectura;
+import org.presentacion.interfaces.Observador;
 
-/**
- * 
- * @author Equipo 1
- */
-public class ModeloJuego implements IModeloJuego, IModeloLectura {
-    private List<Observador> observadores;
-    private IFachadaJuego fachadaJuego;
-    private ResultadoLanzarDadoDTO ultimoResultadoDado;
-    private ResultadoSeleccionarFichaDTO ultimoResultadoFicha;
+public class ModeloJuego implements IModeloLectura {
+    private final List<Observador> observadores = new CopyOnWriteArrayList<>();
+    private int numeroJugadores;
+    private int idJugadorLocal = -1;
     private int idJugadorTurnoActual = 1;
     private int idJugadorUltimaJugada = -1;
-    private boolean dadoLanzadoEnTurno = false;
-    private boolean juegoTerminado;
     private int idJugadorGanador = -1;
-    
-    public ModeloJuego(IFachadaJuego fachadaJuego) {
-        this.observadores = new ArrayList<>();
-        this.fachadaJuego = fachadaJuego;
+    private int idFichaSeleccionada = -1;
+    private int posicionFicha = -1;
+    private int idFichaRegresada = -1;
+    private int idJugadorFichaCapturada = -1;
+    private int idFichaCapturada = -1;
+    private int valorDado;
+    private boolean puedeVolverATirar;
+    private boolean puedeSacarFicha;
+    private boolean tieneMovimientoValido;
+    private boolean capturo;
+    private boolean llegoAMeta;
+    private boolean cambioTurno;
+    private boolean juegoTerminado;
+    private boolean partidaIniciada;
+    private boolean conexionActiva = true;
+    private boolean dadoLanzadoEnTurno;
+    private boolean solicitudPendiente;
+    private String mensajeEstado = "Conectando con el servidor...";
+    private String mensajeError = "";
+    private long versionMensajeError;
+
+    public synchronized void recibirDTO(IDTO dto) {
+        if (dto instanceof AsignacionJugadorDTO asignacion) {
+            aplicarAsignacion(asignacion);
+        } else if (dto instanceof ErrorJuegoDTO error) {
+            registrarErrorJuego(error.getMensaje());
+        } else if (dto instanceof ResultadoLanzarDadoDTO resultado) {
+            aplicarResultadoDado(resultado);
+        } else if (dto instanceof ResultadoSeleccionarFichaDTO resultado) {
+            aplicarResultadoSeleccion(resultado);
+        } else {
+            throw new IllegalArgumentException("Tipo de respuesta no reconocido.");
+        }
+        notificarEnEdt();
     }
 
-    @Override
-    public void registrarObservador(Observador o) {
-        observadores.add(o);
+    private void aplicarAsignacion(AsignacionJugadorDTO asignacion) {
+        if (asignacion.getNumeroJugadores() < 2 || asignacion.getNumeroJugadores() > 4
+                || asignacion.getIdJugador() < 1
+                || asignacion.getIdJugador() > asignacion.getNumeroJugadores()) {
+            throw new IllegalArgumentException("El servidor envió una asignación de jugador inválida.");
+        }
+        if (idJugadorLocal != -1 && idJugadorLocal != asignacion.getIdJugador()) {
+            throw new IllegalStateException("El servidor cambió el jugador asignado a esta conexión.");
+        }
+
+        numeroJugadores = asignacion.getNumeroJugadores();
+        idJugadorLocal = asignacion.getIdJugador();
+        partidaIniciada = asignacion.isPartidaIniciada();
+        mensajeEstado = partidaIniciada
+                ? "Partida iniciada"
+                : "Esperando a que se conecten los demás jugadores...";
     }
 
-    @Override
-    public void removerObservador(Observador o) {
-        observadores.remove(o);
-    }
+    private void aplicarResultadoDado(ResultadoLanzarDadoDTO resultado) {
+        validarJugadorEnPartida(resultado.getIdJugador());
+        idJugadorUltimaJugada = resultado.getIdJugador();
+        idFichaSeleccionada = -1;
+        idFichaRegresada = resultado.getIdFichaRegresada();
+        idJugadorFichaCapturada = -1;
+        idFichaCapturada = -1;
+        capturo = false;
+        llegoAMeta = false;
+        cambioTurno = false;
+        valorDado = resultado.getResultadoDado();
+        puedeVolverATirar = resultado.isPuedeVolverATirar();
+        puedeSacarFicha = resultado.isPuedeSacarFicha();
+        tieneMovimientoValido = resultado.isTieneMovimientoValido();
+        solicitudPendiente = false;
 
-    @Override
-    public void notificarObservadores() {
-        for (Observador observador : observadores) {
-            observador.update(this);
+        if (tieneMovimientoValido) {
+            idJugadorTurnoActual = resultado.getIdJugador();
+            dadoLanzadoEnTurno = true;
+        } else {
+            idJugadorTurnoActual = siguienteJugador(resultado.getIdJugador());
+            dadoLanzadoEnTurno = false;
         }
     }
 
-    @Override
-    public void solicitarLanzarDado(int idJugador) {
-        validarPartidaActiva();
-        this.ultimoResultadoFicha = null;
+    private void aplicarResultadoSeleccion(ResultadoSeleccionarFichaDTO resultado) {
+        validarJugadorEnPartida(resultado.getIdJugador());
+        idJugadorUltimaJugada = resultado.getIdJugador();
+        idFichaSeleccionada = resultado.getIdFicha();
+        posicionFicha = resultado.getPosicionFicha();
+        idFichaRegresada = -1;
+        capturo = resultado.isCapturo();
+        idJugadorFichaCapturada = resultado.getIdJugadorFichaCapturada();
+        idFichaCapturada = resultado.getIdFichaCapturada();
+        llegoAMeta = resultado.isLlegoAMeta();
+        cambioTurno = resultado.isCambioTurno();
+        juegoTerminado = resultado.isGanador();
+        solicitudPendiente = false;
+        dadoLanzadoEnTurno = false;
 
-        this.ultimoResultadoDado = fachadaJuego.lanzarDado(new LanzarDadoDTO(idJugador));
-        
-        if (ultimoResultadoDado != null) {
-            if (ultimoResultadoDado.getIdFichaRegresada() != -1) {
-                idJugadorUltimaJugada = idJugador;
-            }
-            this.dadoLanzadoEnTurno = ultimoResultadoDado.isTieneMovimientoValido();
-            if (!this.dadoLanzadoEnTurno) {
-                this.idJugadorTurnoActual = (this.idJugadorTurnoActual % 4) + 1;
-            }
+        if (juegoTerminado) {
+            idJugadorGanador = resultado.getIdJugador();
+            mensajeEstado = "Ganó el jugador " + idJugadorGanador;
+        } else if (cambioTurno) {
+            idJugadorTurnoActual = siguienteJugador(resultado.getIdJugador());
+        } else {
+            idJugadorTurnoActual = resultado.getIdJugador();
         }
-        notificarObservadores();
     }
 
-    @Override
-    public void solicitarSeleccionarFicha(int idJugador, int idFicha) {
-        validarPartidaActiva();
-        this.ultimoResultadoFicha = fachadaJuego.seleccionarFicha(new SeleccionarFichaDTO(idJugador, idFicha));
-        
-        if (ultimoResultadoFicha != null) {
-            this.idJugadorUltimaJugada = idJugador;
-            this.dadoLanzadoEnTurno = false;
-            juegoTerminado = ultimoResultadoFicha.isGanador();
-            if (juegoTerminado) {
-                idJugadorGanador = idJugador;
-            } else if (ultimoResultadoFicha.isCambioTurno()) {
-                this.idJugadorTurnoActual = (this.idJugadorTurnoActual % 4) + 1;
-            }
+    private void validarJugadorEnPartida(int idJugador) {
+        if (!partidaIniciada || idJugador < 1 || idJugador > numeroJugadores) {
+            throw new IllegalStateException("Se recibió una jugada antes de iniciar la partida o de un jugador inválido.");
         }
-        
-        notificarObservadores();
-    }
-    
-    @Override
-    public int getValorDado() {
-        return ultimoResultadoDado != null ? ultimoResultadoDado.getResultadoDado() : 0;
     }
 
-    @Override
-    public boolean puedeVolverATirar() {
-        return ultimoResultadoDado != null && ultimoResultadoDado.isPuedeVolverATirar();
+    private int siguienteJugador(int idJugador) {
+        return idJugador % numeroJugadores + 1;
     }
 
-    @Override
-    public boolean puedeSacarFicha() {
-        return ultimoResultadoDado != null && ultimoResultadoDado.isPuedeSacarFicha();
+    public synchronized void prepararLanzamiento() {
+        validarConexionYPartida();
+        if (idJugadorTurnoActual != idJugadorLocal || dadoLanzadoEnTurno || solicitudPendiente) {
+            throw new IllegalStateException("No puedes lanzar el dado en este momento.");
+        }
+        idFichaSeleccionada = -1;
+        solicitudPendiente = true;
+        notificarEnEdt();
     }
 
-    @Override
-    public boolean tieneMovimientoValido() {
-        return ultimoResultadoDado != null && ultimoResultadoDado.isTieneMovimientoValido();
+    public synchronized void prepararSeleccion(int idFicha) {
+        validarConexionYPartida();
+        if (idJugadorTurnoActual != idJugadorLocal || !dadoLanzadoEnTurno || solicitudPendiente) {
+            throw new IllegalStateException("No puedes seleccionar una ficha en este momento.");
+        }
+        if (idFicha < idJugadorLocal * 10 + 1 || idFicha > idJugadorLocal * 10 + 4) {
+            throw new IllegalArgumentException("La ficha seleccionada no pertenece a este jugador.");
+        }
+        idFichaSeleccionada = -1;
+        solicitudPendiente = true;
+        notificarEnEdt();
     }
 
-    @Override
-    public int getIdFichaSeleccionada() {
-        return ultimoResultadoFicha != null ? ultimoResultadoFicha.getIdFicha() : -1;
-    }
-
-    @Override
-    public int getPosicionFicha() {
-        return ultimoResultadoFicha != null ? ultimoResultadoFicha.getPosicionFicha() : -1;
-    }
-
-    @Override
-    public boolean isCapturo() {
-        return ultimoResultadoFicha != null && ultimoResultadoFicha.isCapturo();
-    }
-
-    @Override
-    public boolean isLlegoAMeta() {
-        return ultimoResultadoFicha != null && ultimoResultadoFicha.isLlegoAMeta();
-    }
-
-    @Override
-    public boolean isCambioTurno() {
-        return ultimoResultadoFicha != null && ultimoResultadoFicha.isCambioTurno();
-    }
-
-    @Override
-    public int getIdJugadorTurnoActual() {
-        return idJugadorTurnoActual;
-    }
-
-    @Override
-    public boolean isDadoLanzadoEnTurno() {
-        return dadoLanzadoEnTurno;
-    }
-
-    @Override
-    public int getIdJugadorUltimaJugada() {
-        return idJugadorUltimaJugada;
-    }
-
-    @Override
-    public int getIdFichaRegresada() {
-        return ultimoResultadoDado != null ? ultimoResultadoDado.getIdFichaRegresada() : -1;
-    }
-
-    @Override
-    public int getIdJugadorFichaCapturada() {
-        return ultimoResultadoFicha != null ? ultimoResultadoFicha.getIdJugadorFichaCapturada() : -1;
-    }
-
-    @Override
-    public int getIdFichaCapturada() {
-        return ultimoResultadoFicha != null ? ultimoResultadoFicha.getIdFichaCapturada() : -1;
-    }
-
-    @Override
-    public boolean isJuegoTerminado() {
-        return juegoTerminado;
-    }
-
-    @Override
-    public int getIdJugadorGanador() {
-        return idJugadorGanador;
-    }
-
-    private void validarPartidaActiva() {
+    private void validarConexionYPartida() {
+        if (!conexionActiva) {
+            throw new IllegalStateException("No hay conexión activa con el servidor.");
+        }
+        if (!partidaIniciada) {
+            throw new IllegalStateException(mensajeEstado);
+        }
         if (juegoTerminado) {
             throw new IllegalStateException("La partida ya terminó.");
         }
     }
+
+    public synchronized void cancelarSolicitud(String mensaje) {
+        solicitudPendiente = false;
+        idFichaSeleccionada = -1;
+        idFichaRegresada = -1;
+        idFichaCapturada = -1;
+        mensajeError = mensaje;
+        versionMensajeError++;
+        notificarEnEdt();
+    }
+
+    private void registrarErrorJuego(String mensaje) {
+        solicitudPendiente = false;
+        idFichaSeleccionada = -1;
+        idFichaRegresada = -1;
+        idFichaCapturada = -1;
+        mensajeError = mensaje == null || mensaje.isBlank()
+                ? "El servidor rechazó la solicitud."
+                : mensaje;
+        versionMensajeError++;
+    }
+
+    public synchronized void reportarErrorConexion(String mensaje) {
+        conexionActiva = false;
+        partidaIniciada = false;
+        solicitudPendiente = false;
+        mensajeError = mensaje;
+        mensajeEstado = "Conexión con el servidor interrumpida";
+        versionMensajeError++;
+        notificarEnEdt();
+    }
+
+    private void notificarEnEdt() {
+        Runnable notificar = () -> {
+            for (Observador observador : observadores) {
+                observador.update(this);
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            notificar.run();
+        } else {
+            SwingUtilities.invokeLater(notificar);
+        }
+    }
+
+    @Override
+    public void registrarObservador(Observador observador) {
+        if (observador != null) {
+            observadores.add(observador);
+        }
+    }
+
+    @Override
+    public void removerObservador(Observador observador) {
+        observadores.remove(observador);
+    }
+
+    @Override
+    public void notificarObservadores() {
+        notificarEnEdt();
+    }
+
+    @Override
+    public synchronized int getValorDado() { return valorDado; }
+    @Override
+    public synchronized boolean puedeVolverATirar() { return puedeVolverATirar; }
+    @Override
+    public synchronized boolean puedeSacarFicha() { return puedeSacarFicha; }
+    @Override
+    public synchronized boolean tieneMovimientoValido() { return tieneMovimientoValido; }
+    @Override
+    public synchronized int getIdFichaSeleccionada() { return idFichaSeleccionada; }
+    @Override
+    public synchronized int getPosicionFicha() { return posicionFicha; }
+    @Override
+    public synchronized boolean isCapturo() { return capturo; }
+    @Override
+    public synchronized boolean isLlegoAMeta() { return llegoAMeta; }
+    @Override
+    public synchronized boolean isCambioTurno() { return cambioTurno; }
+    @Override
+    public synchronized int getIdJugadorTurnoActual() { return idJugadorTurnoActual; }
+    @Override
+    public synchronized boolean isDadoLanzadoEnTurno() { return dadoLanzadoEnTurno; }
+    @Override
+    public synchronized int getIdJugadorUltimaJugada() { return idJugadorUltimaJugada; }
+    @Override
+    public synchronized int getIdFichaRegresada() { return idFichaRegresada; }
+    @Override
+    public synchronized int getIdJugadorFichaCapturada() { return idJugadorFichaCapturada; }
+    @Override
+    public synchronized int getIdFichaCapturada() { return idFichaCapturada; }
+    @Override
+    public synchronized boolean isJuegoTerminado() { return juegoTerminado; }
+    @Override
+    public synchronized int getIdJugadorGanador() { return idJugadorGanador; }
+    @Override
+    public synchronized int getIdJugadorLocal() { return idJugadorLocal; }
+    @Override
+    public synchronized int getNumeroJugadores() { return numeroJugadores; }
+    @Override
+    public synchronized boolean isPartidaIniciada() { return partidaIniciada; }
+    @Override
+    public synchronized boolean isConexionActiva() { return conexionActiva; }
+    @Override
+    public synchronized boolean isSolicitudPendiente() { return solicitudPendiente; }
+    @Override
+    public synchronized String getMensajeEstado() { return mensajeEstado; }
+    @Override
+    public synchronized String getMensajeError() { return mensajeError; }
+    @Override
+    public synchronized long getVersionMensajeError() { return versionMensajeError; }
 }
