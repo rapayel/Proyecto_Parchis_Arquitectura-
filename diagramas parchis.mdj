@@ -108438,6 +108438,32 @@
 							]
 						}
 					]
+				},
+				{
+					"_type": "UMLPackage",
+					"_id": "AAAAAAGh5xBorvMtq+A=",
+					"_parent": {
+						"$ref": "AAAAAAGh5ph5TFyvyRc="
+					},
+					"name": "diseño",
+					"ownedElements": [
+						{
+							"_type": "UMLPackage",
+							"_id": "AAAAAAGh5xMMJhBNftI=",
+							"_parent": {
+								"$ref": "AAAAAAGh5xBorvMtq+A="
+							},
+							"name": "diagrama de clases"
+						},
+						{
+							"_type": "UMLPackage",
+							"_id": "AAAAAAGh5xM2DBDhfDI=",
+							"_parent": {
+								"$ref": "AAAAAAGh5xBorvMtq+A="
+							},
+							"name": "diagrama de secuencia"
+						}
+					]
 				}
 			]
 		}
