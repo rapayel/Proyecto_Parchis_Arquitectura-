@@ -373,7 +373,7 @@
 									"font": "Arial;13;0",
 									"left": 639.5,
 									"top": 189,
-									"width": 112.5654296875,
+									"width": 112,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqES3Pf4HLc="
@@ -566,7 +566,7 @@
 									"font": "Arial;13;0",
 									"left": 403,
 									"top": 189,
-									"width": 91.64990234375,
+									"width": 91,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqFMkfgp/jE="
@@ -752,7 +752,7 @@
 									"font": "Arial;13;0",
 									"left": 412.5,
 									"top": 253,
-									"width": 98.1435546875,
+									"width": 97,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqGUE/hYzfw="
@@ -1403,7 +1403,7 @@
 									"font": "Arial;13;0",
 									"left": 396,
 									"top": 341,
-									"width": 95.97900390625,
+									"width": 95,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqMkSPyazcs="
@@ -1864,7 +1864,7 @@
 									"font": "Arial;13;0",
 									"left": 415,
 									"top": 413,
-									"width": 108.9853515625,
+									"width": 108,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqNxyv7a9jo="
@@ -2325,7 +2325,7 @@
 									"font": "Arial;13;0",
 									"left": 631,
 									"top": 389,
-									"width": 110.419921875,
+									"width": 110,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGgYqPaowKmpEY="
@@ -7679,9 +7679,9 @@
 																"$ref": "AAAAAAGgg5rN9v46oF4="
 															},
 															"font": "Arial;13;0",
-															"left": 32.72998046875,
+															"left": 30.55908203125,
 															"top": 13,
-															"width": 132.96435546875,
+															"width": 118.396484375,
 															"height": 13,
 															"text": "RealizarJugadaExitosa"
 														},
@@ -7694,7 +7694,7 @@
 															"font": "Arial;13;1",
 															"left": 13,
 															"top": 13,
-															"width": 13.72998046875,
+															"width": 11.55908203125,
 															"height": 13,
 															"text": "sd"
 														}
@@ -9325,9 +9325,9 @@
 																"$ref": "AAAAAAGgg7B+zRX/NCg="
 															},
 															"font": "Arial;13;0",
-															"left": 575.9599609375,
+															"left": 572.3291015625,
 															"top": 309,
-															"width": 179.96240234375,
+															"width": 162.0556640625,
 															"height": 13,
 															"text": "bucle de cada ficha del jugador"
 														},
@@ -9340,7 +9340,7 @@
 															"font": "Arial;13;1",
 															"left": 549,
 															"top": 309,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -9649,9 +9649,9 @@
 																"$ref": "AAAAAAGgg7T+zhZXPCE="
 															},
 															"font": "Arial;13;0",
-															"left": 575.9599609375,
+															"left": 572.3291015625,
 															"top": 405,
-															"width": 169.0888671875,
+															"width": 153.3974609375,
 															"height": 13,
 															"text": "bucle revisando la trayectoria"
 														},
@@ -9664,7 +9664,7 @@
 															"font": "Arial;13;1",
 															"left": 549,
 															"top": 405,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -10864,9 +10864,9 @@
 																"$ref": "AAAAAAGgg8BlBSuX7FY="
 															},
 															"font": "Arial;13;0",
-															"left": 551.9599609375,
+															"left": 548.3291015625,
 															"top": 701,
-															"width": 173.42431640625,
+															"width": 156.27294921875,
 															"height": 13,
 															"text": "en caso de capturar ficha rival"
 														},
@@ -10879,7 +10879,7 @@
 															"font": "Arial;13;1",
 															"left": 525,
 															"top": 701,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -11411,9 +11411,9 @@
 																"$ref": "AAAAAAGgg8NbdCwRl0o="
 															},
 															"font": "Arial;13;0",
-															"left": 551.9599609375,
+															"left": 548.3291015625,
 															"top": 837,
-															"width": 169.8125,
+															"width": 150.8583984375,
 															"height": 13,
 															"text": "en caso de formacion barrera"
 														},
@@ -11426,7 +11426,7 @@
 															"font": "Arial;13;1",
 															"left": 525,
 															"top": 837,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -11735,9 +11735,9 @@
 																"$ref": "AAAAAAGgg8ZjISx8TTo="
 															},
 															"font": "Arial;13;0",
-															"left": 551.9599609375,
+															"left": 548.3291015625,
 															"top": 917,
-															"width": 208.1396484375,
+															"width": 181.5302734375,
 															"height": 13,
 															"text": "en caso de llegada exacta a la meta"
 														},
@@ -11750,7 +11750,7 @@
 															"font": "Arial;13;1",
 															"left": 525,
 															"top": 917,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -12951,9 +12951,9 @@
 																"$ref": "AAAAAAGgg882QS2JTlI="
 															},
 															"font": "Arial;13;0",
-															"left": 543.9599609375,
+															"left": 540.3291015625,
 															"top": 1213,
-															"width": 106.97705078125,
+															"width": 92.4091796875,
 															"height": 13,
 															"text": "en caso de que no"
 														},
@@ -12966,7 +12966,7 @@
 															"font": "Arial;13;1",
 															"left": 517,
 															"top": 1213,
-															"width": 20.9599609375,
+															"width": 17.3291015625,
 															"height": 13,
 															"text": "seq"
 														},
@@ -107630,7 +107630,7 @@
 																		"$ref": "AAAAAAGh5wgrjPKkXSk="
 																	},
 																	"font": "Arial;13;0",
-																	"left": 207.9599609375,
+																	"left": 200.72998046875,
 																	"top": 293,
 																	"width": 242.0869140625,
 																	"height": 13,
@@ -107645,9 +107645,9 @@
 																	"font": "Arial;13;1",
 																	"left": 181,
 																	"top": 293,
-																	"width": 20.9599609375,
+																	"width": 13.72998046875,
 																	"height": 13,
-																	"text": "seq"
+																	"text": "alt"
 																},
 																{
 																	"_type": "UMLInteractionOperandCompartmentView",
@@ -108362,7 +108362,7 @@
 														"$ref": "AAAAAAGh5utvMOxXGqA="
 													},
 													"name": "el color nuevo provoca colores duplicados",
-													"interactionOperator": "seq",
+													"interactionOperator": "alt",
 													"operands": [
 														{
 															"_type": "UMLInteractionOperand",
