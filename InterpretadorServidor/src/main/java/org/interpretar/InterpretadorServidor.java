@@ -17,7 +17,7 @@ public final class InterpretadorServidor {
     private static final int PUERTO_PREDETERMINADO = 5000;
     private static final int NUMERO_PARA_SACAR_FICHA = 5;
     private static final int CASILLAS_SEGURAS_POR_ALA = 1;
-    private static final int NUMERO_JUGADORES_PREDETERMINADO = 4;
+    private static final int NUMERO_JUGADORES_PREDETERMINADO = 2;
     private static final int FICHAS_POR_JUGADOR = 4;
 
     private InterpretadorServidor() {

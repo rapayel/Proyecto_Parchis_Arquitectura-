@@ -70,9 +70,8 @@ public class Tablero {
     }
 
     private boolean esCasillaSegura(int posicion) {
-        int casillasPorJugador = totalCasillas / jugadores.size();
         for (int i = 0; i < jugadores.size(); i++) {
-            if (posicion == i * casillasPorJugador + 1) {
+            if (posicion == obtenerCasillaSalida(i)) {
                 return true;
             }
         }
@@ -319,7 +318,15 @@ public class Tablero {
 
     private int obtenerCasillaSalidaJugador(Jugador jugador) {
         int indice = jugadores.indexOf(jugador);
-        return (indice * (totalCasillas / jugadores.size())) + 1;
+        if (indice < 0) {
+            throw new IllegalArgumentException("El jugador no pertenece a esta partida.");
+        }
+        return obtenerCasillaSalida(indice);
+    }
+
+    private int obtenerCasillaSalida(int indiceJugador) {
+        int indiceBrazo = jugadores.size() == 2 ? indiceJugador * 2 : indiceJugador;
+        return indiceBrazo * (totalCasillas / 4) + 1;
     }
 
     private boolean puedeVolverATirar() {

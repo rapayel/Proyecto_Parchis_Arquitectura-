@@ -154,7 +154,15 @@ public class PanelTablero extends JPanel {
         double[][] posCasas = {{0, 0}, {S - a, 0}, {S - a, S - a}, {0, S - a}};
 
         for (int i = 0; i < 4; i++) {
-            dibujarCasa(g, posCasas[i][0], posCasas[i][1], a, i, S);
+            int jugador = jugadorEnBrazo(i);
+            dibujarCasa(
+                    g,
+                    posCasas[i][0],
+                    posCasas[i][1],
+                    a,
+                    colorEnBrazo(i),
+                    jugador - 1,
+                    S);
         }
 
         for (int k = 0; k < 4; k++) {
@@ -212,6 +220,9 @@ public class PanelTablero extends JPanel {
         for (FichaVista f : fichas) {
             if (f.getCasillaActual() > 0) {
                 int posicion = f.getCasillaActual();
+                if (posicion == 76) {
+                    continue;
+                }
                 long clave = posicion > 68 && posicion < 76
                         ? ((long) f.getIdJugador() << 32) | posicion
                         : posicion;
@@ -228,7 +239,7 @@ public class PanelTablero extends JPanel {
             FichaVista primera = grupo.get(0);
             int posicion = primera.getCasillaActual();
             boolean horizontal = posicion > 68 && posicion < 76
-                    ? (primera.getIdJugador() % 2 == 0)
+                    ? (brazoDeJugador(primera.getIdJugador()) % 2 == 0)
                     : (brazoDeCasilla(posicion) % 2 == 0);
 
             double radio = Math.min(grupo.get(0).getRadio() * 0.85, (largoCasilla * 0.9) / (2.0 * n));
@@ -280,7 +291,7 @@ public class PanelTablero extends JPanel {
         double cy = S / 2.0;
 
         if (casilla >= 69 && casilla < 76) {
-            int k = Math.floorMod(idJugador - 1, 4);
+            int k = brazoDeJugador(idJugador);
             int fila = 76 - casilla;
             double localX = a + cw + cw / 2.0;
             double localY = fila * ch + ch / 2.0;
@@ -322,7 +333,7 @@ public class PanelTablero extends JPanel {
     private void dibujarBrazo(Graphics2D g, int k, double S, double a, double c) {
         double cw = c / 3.0; 
         double ch = a / 8.0; 
-        Color color = coloresJugadores[k];
+        Color color = colorEnBrazo(k);
         float grosor = (float) Math.max(1, S / 400);
         Font fuente = new Font("SansSerif", Font.PLAIN, Math.max(6, (int) (ch * 0.5)));
  
@@ -362,13 +373,36 @@ public class PanelTablero extends JPanel {
     }
 
     private int jugadorDeSalidaEn(int casilla) {
-        int casillasPorJugador = 68 / numeroJugadores;
         for (int i = 0; i < numeroJugadores; i++) {
-            if (casilla == i * casillasPorJugador + 1) {
+            if (casilla == casillaSalida(i)) {
                 return i;
             }
         }
         return -1;
+    }
+
+    private int jugadorEnBrazo(int brazo) {
+        for (int i = 0; i < numeroJugadores; i++) {
+            if (brazoDeJugador(i + 1) == brazo) {
+                return i + 1;
+            }
+        }
+        return -1;
+    }
+
+    private int brazoDeJugador(int idJugador) {
+        int indiceJugador = idJugador - 1;
+        return numeroJugadores == 2 ? indiceJugador * 2 : indiceJugador;
+    }
+
+    private int casillaSalida(int indiceJugador) {
+        int brazo = numeroJugadores == 2 ? indiceJugador * 2 : indiceJugador;
+        return brazo * 17 + 1;
+    }
+
+    private Color colorEnBrazo(int brazo) {
+        int jugador = jugadorEnBrazo(brazo);
+        return jugador < 1 ? new Color(210, 210, 210) : coloresJugadores[jugador - 1];
     }
 
     private void dibujarNumero(Graphics2D g, String txt, double cx, double cy, int k, Font f) {
@@ -392,10 +426,10 @@ public class PanelTablero extends JPanel {
         Point2D.Double p4 = new Point2D.Double(a, a + c);
         Point2D.Double ce = new Point2D.Double(m, m);
  
-        triangulo(g, p1, p2, ce, coloresJugadores[0]); 
-        triangulo(g, p2, p3, ce, coloresJugadores[1]); 
-        triangulo(g, p3, p4, ce, coloresJugadores[2]); 
-        triangulo(g, p4, p1, ce, coloresJugadores[3]); 
+        triangulo(g, p1, p2, ce, colorEnBrazo(0));
+        triangulo(g, p2, p3, ce, colorEnBrazo(1));
+        triangulo(g, p3, p4, ce, colorEnBrazo(2));
+        triangulo(g, p4, p1, ce, colorEnBrazo(3));
     }
  
     private void triangulo(Graphics2D g, Point2D p, Point2D q, Point2D r, Color color) {
@@ -411,7 +445,14 @@ public class PanelTablero extends JPanel {
         g.draw(t);
     }
     
-    private void dibujarCasa(Graphics2D g, double x, double y, double tam, int indice, double S) {
+    private void dibujarCasa(
+            Graphics2D g,
+            double x,
+            double y,
+            double tam,
+            Color colorCasa,
+            int indiceJugador,
+            double S) {
         g.setColor(Color.WHITE);
         g.fill(new Rectangle2D.Double(x, y, tam, tam));
 
@@ -419,7 +460,7 @@ public class PanelTablero extends JPanel {
         double r = tam * 0.43;
         float grosor = (float) Math.max(1, S / 400);
  
-        g.setColor(coloresJugadores[indice]);
+        g.setColor(colorCasa);
         g.fill(new Ellipse2D.Double(cx - r, cy - r, 2 * r, 2 * r));
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(grosor));
@@ -440,7 +481,9 @@ public class PanelTablero extends JPanel {
         int n = 0;
         for (int p = 0; p < 8; p++) {
             Color otro;
-            do { otro = coloresJugadores[n++ % 4]; } while (otro == coloresJugadores[indice]);
+            do {
+                otro = coloresJugadores[n++ % 4];
+            } while (indiceJugador >= 0 && otro == coloresJugadores[indiceJugador]);
             double ang = Math.toRadians(p * 45 - 90);
             double largo = r3 * (p % 2 == 0 ? 0.9 : 0.65);
             double ancho = r3 * 0.28;
