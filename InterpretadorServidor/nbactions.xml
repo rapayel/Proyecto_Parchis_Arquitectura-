@@ -12,7 +12,7 @@
         <properties>
             <exec.vmArgs></exec.vmArgs>
             <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
-            <exec.appArgs>2 5000</exec.appArgs>
+            <exec.appArgs>3 5000</exec.appArgs>
             <exec.mainClass>org.interpretar.InterpretadorServidor</exec.mainClass>
             <exec.executable>java</exec.executable>
         </properties>
