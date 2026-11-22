@@ -195,17 +195,17 @@ public class PanelTablero extends JPanel {
             int pos = f.getCasillaActual();
 
             if (pos <= 0) { 
-                int idxJugador = f.getIdJugador() - 1;
-                double cx = posCasas[idxJugador][0] + tamCasa / 2.0;
-                double cy = posCasas[idxJugador][1] + tamCasa / 2.0;
+            int brazo = brazoDeJugador(f.getIdJugador()); 
+            double cx = posCasas[brazo][0] + tamCasa / 2.0;
+            double cy = posCasas[brazo][1] + tamCasa / 2.0;
 
-                List<FichaVista> enCasa = obtenerFichasEnCasa(f.getIdJugador());
-                int orden = enCasa.indexOf(f);
-                int totalEnCasa = Math.max(1, enCasa.size());
+            List<FichaVista> enCasa = obtenerFichasEnCasa(f.getIdJugador());
+            int orden = enCasa.indexOf(f);
+            int totalEnCasa = Math.max(1, enCasa.size());
 
-                double angulo = Math.toRadians((360.0 / totalEnCasa) * orden - 90);
-                f.setPosicion(cx + Math.cos(angulo) * radioDistribucion, cy + Math.sin(angulo) * radioDistribucion);
-            } else { 
+            double angulo = Math.toRadians((360.0 / totalEnCasa) * orden - 90);
+            f.setPosicion(cx + Math.cos(angulo) * radioDistribucion, cy + Math.sin(angulo) * radioDistribucion);
+        } else { 
                 Point2D coord = calcularCoordenadaCasilla(pos, f.getIdJugador(), S, tamCasa, c);
                 if (coord != null) {
                     f.setPosicion(coord.getX(), coord.getY());
