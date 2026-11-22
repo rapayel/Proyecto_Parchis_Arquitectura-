@@ -2,6 +2,10 @@ package org.presentacion.mvc;
 
 import org.presentacion.interfaces.IInterpretadorCliente;
 
+/**
+ * 
+ * @author Equipo 1
+ */
 public class ControladorJuego {
     private final IInterpretadorCliente interpretador;
 
