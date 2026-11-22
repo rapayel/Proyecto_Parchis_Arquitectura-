@@ -195,9 +195,9 @@ public class PanelTablero extends JPanel {
             int pos = f.getCasillaActual();
 
             if (pos <= 0) { 
-                int brazoJugador = brazoDeJugador(f.getIdJugador());
-                double cx = posCasas[brazoJugador][0] + tamCasa / 2.0;
-                double cy = posCasas[brazoJugador][1] + tamCasa / 2.0;
+                int idxJugador = f.getIdJugador() - 1;
+                double cx = posCasas[idxJugador][0] + tamCasa / 2.0;
+                double cy = posCasas[idxJugador][1] + tamCasa / 2.0;
 
                 List<FichaVista> enCasa = obtenerFichasEnCasa(f.getIdJugador());
                 int orden = enCasa.indexOf(f);
@@ -292,7 +292,7 @@ public class PanelTablero extends JPanel {
 
         if (casilla >= 69 && casilla < 76) {
             int k = brazoDeJugador(idJugador);
-            int fila = casilla - 68;
+            int fila = 76 - casilla;
             double localX = a + cw + cw / 2.0;
             double localY = fila * ch + ch / 2.0;
             double rad = k * Math.PI / 2.0;
