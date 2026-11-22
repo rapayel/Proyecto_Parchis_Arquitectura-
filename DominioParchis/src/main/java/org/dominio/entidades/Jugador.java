@@ -22,8 +22,8 @@ public class Jugador {
         if (fichas == null || fichas.isEmpty()) {
             throw new IllegalArgumentException("El jugador debe crearse con sus fichas correspondientes.");
         }
-        if (fichas.size() != 4) {
-            throw new IllegalArgumentException("El jugador debe contar exactamente con 4 fichas.");
+        if (fichas.size() < 3 || fichas.size() > 6) {
+            throw new IllegalArgumentException("El jugador debe contar entre 3 y 6 fichas.");
         }
 
         this.id = id;

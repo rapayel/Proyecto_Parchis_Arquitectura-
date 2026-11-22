@@ -34,6 +34,9 @@ public interface IModeloLectura {
     int getIdJugadorGanador();
     int getIdJugadorLocal();
     int getNumeroJugadores();
+    int getFichasPorJugador();
+    int getCasillasSegurasPorAla();
+    int getNumeroSalidaDado();
     boolean isPartidaIniciada();
     boolean isConexionActiva();
     boolean isSolicitudPendiente();

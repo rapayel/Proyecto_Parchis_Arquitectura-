@@ -11,8 +11,10 @@ import org.code_desc.CodeDesc;
 import org.dtos.IDTO;
 import org.dtos.LanzarDadoDTO;
 import org.dtos.SeleccionarFichaDTO;
+import org.dtos.CrearPartidaDTO;
 import org.presentacion.interfaces.IInterpretadorCliente;
 import org.presentacion.mvc.ControladorJuego;
+import org.presentacion.mvc.FrmConfiguracionPartida;
 import org.presentacion.mvc.MainJuego;
 import org.presentacion.mvc.ModeloJuego;
 import org.salida.ConexionClienteTCP;
@@ -62,6 +64,22 @@ public final class InterpretadorCliente implements IInterpretadorCliente, AutoCl
         ModeloJuego modelo = new ModeloJuego();
         try {
             InterpretadorCliente interpretador = new InterpretadorCliente(modelo, host.trim(), puerto);
+            if (!GraphicsEnvironment.isHeadless()) {
+                int crear = JOptionPane.showConfirmDialog(
+                        null,
+                        "¿Deseas crear una partida nueva?",
+                        "Crear partida",
+                        JOptionPane.YES_NO_OPTION);
+                if (crear == JOptionPane.YES_OPTION) {
+                    int[] configuracion = FrmConfiguracionPartida.solicitarConfiguracion();
+                    if (configuracion != null) {
+                        interpretador.solicitarCrearPartida(
+                                configuracion[0],
+                                configuracion[1],
+                                configuracion[2]);
+                    }
+                }
+            }
             SwingUtilities.invokeLater(() -> {
                 JFrame ventana = MainJuego.crearVentana(
                         new ControladorJuego(interpretador),
@@ -129,6 +147,24 @@ public final class InterpretadorCliente implements IInterpretadorCliente, AutoCl
     @Override
     public void solicitarSeleccionarFicha(int idFicha) {
         enviarSolicitud(false, idFicha);
+    }
+
+    @Override
+    public void solicitarCrearPartida(
+            int fichasPorJugador,
+            int casillasSegurasPorAla,
+            int numeroSalidaDado) {
+        try {
+            conexion.enviar(CodeDesc.objetoABytes(new CrearPartidaDTO(
+                    fichasPorJugador,
+                    casillasSegurasPorAla,
+                    numeroSalidaDado)));
+        } catch (IOException e) {
+            modelo.reportarErrorConexion(e.getMessage());
+            close();
+        } catch (RuntimeException e) {
+            modelo.cancelarSolicitud(e.getMessage());
+        }
     }
 
     private void enviarSolicitud(boolean lanzarDado, int idFicha) {

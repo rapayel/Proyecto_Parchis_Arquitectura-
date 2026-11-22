@@ -10,6 +10,7 @@ import org.dtos.*;
  * @author Equipo 1
  */
 public interface IFachadaJuego {
+    public org.dtos.PartidaCreadaDTO crearPartida(org.dtos.CrearPartidaDTO dto);
     public ResultadoLanzarDadoDTO lanzarDado(LanzarDadoDTO dto);
     public ResultadoSeleccionarFichaDTO seleccionarFicha(SeleccionarFichaDTO dto);
 }

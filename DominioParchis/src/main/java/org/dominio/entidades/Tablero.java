@@ -28,10 +28,23 @@ public class Tablero {
     private final int limiteMetaJugador = 76;
 
     public Tablero(List<Jugador> jugadores, int numeroParaSacarFicha, int casillasSegurasPorAla) {
-        this(jugadores, numeroParaSacarFicha, casillasSegurasPorAla, new Random());
+        this(jugadores, numeroParaSacarFicha, casillasSegurasPorAla, 4, new Random());
     }
 
-    Tablero(List<Jugador> jugadores, int numeroParaSacarFicha, int casillasSegurasPorAla, Random random) {
+    public Tablero(
+            List<Jugador> jugadores,
+            int numeroParaSacarFicha,
+            int casillasSegurasPorAla,
+            int fichasPorJugador) {
+        this(jugadores, numeroParaSacarFicha, casillasSegurasPorAla, fichasPorJugador, new Random());
+    }
+
+    Tablero(
+            List<Jugador> jugadores,
+            int numeroParaSacarFicha,
+            int casillasSegurasPorAla,
+            int fichasPorJugador,
+            Random random) {
         if (jugadores == null || jugadores.size() < 2 || jugadores.size() > 4) {
             throw new IllegalArgumentException("El tablero requiere entre 2 y 4 jugadores.");
         }
@@ -43,6 +56,9 @@ public class Tablero {
         }
         if (casillasSegurasPorAla < 1 || casillasSegurasPorAla > 5) {
             throw new IllegalArgumentException("El número de casillas seguras debe estar entre 1 y 5.");
+        }
+        if (fichasPorJugador < 3 || fichasPorJugador > 6) {
+            throw new IllegalArgumentException("La cantidad de fichas debe estar entre 3 y 6.");
         }
 
         this.random = random;

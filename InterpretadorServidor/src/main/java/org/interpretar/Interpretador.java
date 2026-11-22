@@ -6,6 +6,8 @@ import java.io.UncheckedIOException;
 import org.code_desc.CodeDesc;
 import org.dominio.fachada.IFachadaJuego;
 import org.dtos.ErrorJuegoDTO;
+import org.dtos.CrearPartidaDTO;
+import org.dtos.PartidaCreadaDTO;
 import org.dtos.IDTO;
 import org.dtos.LanzarDadoDTO;
 import org.dtos.ResultadoLanzarDadoDTO;
@@ -49,7 +51,13 @@ public class Interpretador {
 
         try {
             IDTO respuesta;
-            if (solicitud instanceof LanzarDadoDTO lanzarDado) {
+            if (solicitud instanceof CrearPartidaDTO crearPartida) {
+                if (juego == null) {
+                    throw new IllegalStateException("La fachada del juego no está disponible.");
+                }
+                PartidaCreadaDTO creada = juego.crearPartida(crearPartida);
+                respuesta = creada;
+            } else if (solicitud instanceof LanzarDadoDTO lanzarDado) {
                 validarJugadorAsignado(idJugadorAsignado, lanzarDado.getIdJugador());
                 ResultadoLanzarDadoDTO resultado = juego.lanzarDado(lanzarDado);
                 respuesta = resultado;

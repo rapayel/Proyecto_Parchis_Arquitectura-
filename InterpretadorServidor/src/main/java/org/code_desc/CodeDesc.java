@@ -10,6 +10,7 @@ import java.io.ObjectInputFilter;
 import org.dtos.IDTO;
 import org.dtos.LanzarDadoDTO;
 import org.dtos.SeleccionarFichaDTO;
+import org.dtos.CrearPartidaDTO;
 
 public final class CodeDesc {
 
@@ -49,7 +50,8 @@ public final class CodeDesc {
                 }
                 if (tipo == String.class
                         || tipo == LanzarDadoDTO.class
-                        || tipo == SeleccionarFichaDTO.class) {
+                        || tipo == SeleccionarFichaDTO.class
+                        || tipo == CrearPartidaDTO.class) {
                     return ObjectInputFilter.Status.ALLOWED;
                 }
                 return ObjectInputFilter.Status.REJECTED;

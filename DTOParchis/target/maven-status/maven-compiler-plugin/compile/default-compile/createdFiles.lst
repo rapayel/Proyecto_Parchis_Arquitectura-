@@ -1,6 +1,8 @@
 org\dtos\ResultadoLanzarDadoDTO.class
 org\dtos\AsignacionJugadorDTO.class
+org\dtos\CrearPartidaDTO.class
 org\dtos\LanzarDadoDTO.class
+org\dtos\PartidaCreadaDTO.class
 org\dtos\ErrorJuegoDTO.class
 org\dtos\SeleccionarFichaDTO.class
 org\dtos\ResultadoSeleccionarFichaDTO.class

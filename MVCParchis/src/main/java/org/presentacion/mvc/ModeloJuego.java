@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 import org.dtos.AsignacionJugadorDTO;
 import org.dtos.ErrorJuegoDTO;
 import org.dtos.IDTO;
+import org.dtos.PartidaCreadaDTO;
 import org.dtos.ResultadoLanzarDadoDTO;
 import org.dtos.ResultadoSeleccionarFichaDTO;
 import org.presentacion.interfaces.IModeloLectura;
@@ -14,6 +15,9 @@ import org.presentacion.interfaces.Observador;
 public class ModeloJuego implements IModeloLectura {
     private final List<Observador> observadores = new CopyOnWriteArrayList<>();
     private int numeroJugadores;
+    private int fichasPorJugador = 4;
+    private int casillasSegurasPorAla = 1;
+    private int numeroSalidaDado = 5;
     private int idJugadorLocal = -1;
     private int idJugadorTurnoActual = 1;
     private int idJugadorUltimaJugada = -1;
@@ -42,6 +46,8 @@ public class ModeloJuego implements IModeloLectura {
     public synchronized void recibirDTO(IDTO dto) {
         if (dto instanceof AsignacionJugadorDTO asignacion) {
             aplicarAsignacion(asignacion);
+        } else if (dto instanceof PartidaCreadaDTO creada) {
+            aplicarConfiguracionPartida(creada);
         } else if (dto instanceof ErrorJuegoDTO error) {
             registrarErrorJuego(error.getMensaje());
         } else if (dto instanceof ResultadoLanzarDadoDTO resultado) {
@@ -52,6 +58,14 @@ public class ModeloJuego implements IModeloLectura {
             throw new IllegalArgumentException("Tipo de respuesta no reconocido.");
         }
         notificarEnEdt();
+    }
+
+    private void aplicarConfiguracionPartida(PartidaCreadaDTO creada) {
+        fichasPorJugador = creada.getFichasPorJugador();
+        casillasSegurasPorAla = creada.getCasillasSegurasPorAla();
+        numeroSalidaDado = creada.getNumeroSalidaDado();
+        numeroJugadores = creada.getNumeroJugadores();
+        mensajeEstado = "Partida creada. Esperando jugadores...";
     }
 
     private void aplicarAsignacion(AsignacionJugadorDTO asignacion) {
@@ -266,6 +280,12 @@ public class ModeloJuego implements IModeloLectura {
     public synchronized int getIdJugadorLocal() { return idJugadorLocal; }
     @Override
     public synchronized int getNumeroJugadores() { return numeroJugadores; }
+    @Override
+    public synchronized int getFichasPorJugador() { return fichasPorJugador; }
+    @Override
+    public synchronized int getCasillasSegurasPorAla() { return casillasSegurasPorAla; }
+    @Override
+    public synchronized int getNumeroSalidaDado() { return numeroSalidaDado; }
     @Override
     public synchronized boolean isPartidaIniciada() { return partidaIniciada; }
     @Override

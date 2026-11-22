@@ -12,6 +12,7 @@ import org.dtos.AsignacionJugadorDTO;
 import org.dtos.ErrorJuegoDTO;
 import org.dtos.ResultadoLanzarDadoDTO;
 import org.dtos.ResultadoSeleccionarFichaDTO;
+import org.dtos.PartidaCreadaDTO;
 
 public final class CodeDesc {
 
@@ -53,7 +54,8 @@ public final class CodeDesc {
                         || tipo == AsignacionJugadorDTO.class
                         || tipo == ErrorJuegoDTO.class
                         || tipo == ResultadoLanzarDadoDTO.class
-                        || tipo == ResultadoSeleccionarFichaDTO.class) {
+                        || tipo == ResultadoSeleccionarFichaDTO.class
+                        || tipo == PartidaCreadaDTO.class) {
                     return ObjectInputFilter.Status.ALLOWED;
                 }
                 return ObjectInputFilter.Status.REJECTED;

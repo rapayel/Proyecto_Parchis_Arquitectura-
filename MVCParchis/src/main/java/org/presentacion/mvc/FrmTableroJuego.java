@@ -95,6 +95,10 @@ public class FrmTableroJuego extends JFrame implements Observador {
                 panelesJugadores[i].setVisible(i < modelo.getNumeroJugadores());
             }
         }
+        panelTablero.configurarTablero(
+                modelo.getFichasPorJugador(),
+                modelo.getCasillasSegurasPorAla(),
+                modelo.getNumeroSalidaDado());
         int turnoActual = modelo.getIdJugadorTurnoActual();
 
         for (PanelJugador pj : panelesJugadores) {

@@ -24,9 +24,9 @@ public class PanelTablero extends JPanel {
     private final boolean MOSTRAR_NUMEROS = true;
     
     private final Color[] coloresJugadores;
-    private final int fichasPorJugador;
-    private final int casillasSegurasPorAla;
-    private final int numeroSalidaDado;
+    private int fichasPorJugador;
+    private int casillasSegurasPorAla;
+    private int numeroSalidaDado;
 
     private int numeroJugadores = 4;
     private List<FichaVista> fichas;
@@ -65,6 +65,21 @@ public class PanelTablero extends JPanel {
 
     public void setAccionesHabilitadas(boolean accionesHabilitadas) {
         this.accionesHabilitadas = accionesHabilitadas;
+    }
+
+    public void configurarTablero(int fichasPorJugador, int casillasSegurasPorAla, int numeroSalidaDado) {
+        int nuevasFichas = Math.max(3, Math.min(6, fichasPorJugador));
+        int nuevasSeguras = Math.max(1, Math.min(5, casillasSegurasPorAla));
+        int nuevoDadoSalida = Math.max(1, Math.min(6, numeroSalidaDado));
+        if (this.fichasPorJugador != nuevasFichas
+                || this.casillasSegurasPorAla != nuevasSeguras
+                || this.numeroSalidaDado != nuevoDadoSalida) {
+            this.fichasPorJugador = nuevasFichas;
+            this.casillasSegurasPorAla = nuevasSeguras;
+            this.numeroSalidaDado = nuevoDadoSalida;
+            inicializarFichas();
+            repaint();
+        }
     }
 
     public void setNumeroJugadores(int numeroJugadores) {
