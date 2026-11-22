@@ -80,6 +80,9 @@ public class ModeloJuego implements IModeloLectura {
 
         numeroJugadores = asignacion.getNumeroJugadores();
         idJugadorLocal = asignacion.getIdJugador();
+        fichasPorJugador = asignacion.getFichasPorJugador();
+        casillasSegurasPorAla = asignacion.getCasillasSegurasPorAla();
+        numeroSalidaDado = asignacion.getNumeroSalidaDado();
         partidaIniciada = asignacion.isPartidaIniciada();
         mensajeEstado = partidaIniciada
                 ? "Partida iniciada"

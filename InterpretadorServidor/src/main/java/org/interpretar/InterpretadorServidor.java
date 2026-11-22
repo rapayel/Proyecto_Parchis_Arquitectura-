@@ -26,12 +26,19 @@ public final class InterpretadorServidor {
         if (numeroJugadores < 2 || numeroJugadores > 4) {
             throw new IllegalArgumentException("La partida requiere entre 2 y 4 jugadores.");
         }
+        int[] configuracion = {4, 1, 5};
 
         ServidorTCP servidor = new ServidorTCP(
                 puerto,
                 numeroJugadores,
                 (idJugador, partidaIniciada) -> CodeDesc.objetoABytes(
-                        new AsignacionJugadorDTO(idJugador, numeroJugadores, partidaIniciada))
+                        new AsignacionJugadorDTO(
+                                idJugador,
+                                numeroJugadores,
+                                partidaIniciada,
+                                configuracion[0],
+                                configuracion[1],
+                                configuracion[2]))
         );
         Interpretador interpretador = new Interpretador(
                 new FachadaJuego(numeroJugadores),
@@ -42,6 +49,11 @@ public final class InterpretadorServidor {
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
+                },
+                creada -> {
+                    configuracion[0] = creada.getFichasPorJugador();
+                    configuracion[1] = creada.getCasillasSegurasPorAla();
+                    configuracion[2] = creada.getNumeroSalidaDado();
                 }
         );
         servidor.addObserver(new Receptor(interpretador::procesarEntrada));

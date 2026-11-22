@@ -18,17 +18,27 @@ public class Interpretador {
     private final IFachadaJuego juego;
     private final Consumer<byte[]> difusor;
     private final BiConsumer<Integer, byte[]> enviadorDeErrores;
+    private final Consumer<PartidaCreadaDTO> partidaCreada;
 
     public Interpretador(
             IFachadaJuego juego,
             Consumer<byte[]> difusor,
             BiConsumer<Integer, byte[]> enviadorDeErrores) {
+        this(juego, difusor, enviadorDeErrores, null);
+    }
+
+    public Interpretador(
+            IFachadaJuego juego,
+            Consumer<byte[]> difusor,
+            BiConsumer<Integer, byte[]> enviadorDeErrores,
+            Consumer<PartidaCreadaDTO> partidaCreada) {
         if (juego == null || difusor == null || enviadorDeErrores == null) {
             throw new IllegalArgumentException("La fachada y los canales de respuesta son obligatorios.");
         }
         this.juego = juego;
         this.difusor = difusor;
         this.enviadorDeErrores = enviadorDeErrores;
+        this.partidaCreada = partidaCreada;
     }
 
     public synchronized void procesarEntrada(int idJugadorAsignado, byte[] bytes) {
@@ -57,6 +67,9 @@ public class Interpretador {
                 }
                 PartidaCreadaDTO creada = juego.crearPartida(crearPartida);
                 respuesta = creada;
+                if (partidaCreada != null) {
+                    partidaCreada.accept(creada);
+                }
             } else if (solicitud instanceof LanzarDadoDTO lanzarDado) {
                 validarJugadorAsignado(idJugadorAsignado, lanzarDado.getIdJugador());
                 ResultadoLanzarDadoDTO resultado = juego.lanzarDado(lanzarDado);

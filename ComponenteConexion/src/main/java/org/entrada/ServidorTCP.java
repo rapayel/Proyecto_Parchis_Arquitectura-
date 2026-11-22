@@ -187,10 +187,6 @@ public class ServidorTCP implements Subject, Runnable {
 
                 byte[] bytes = new byte[longitud];
                 entrada.readFully(bytes);
-                if (!partidaIniciada) {
-                    System.err.println("[ServidorTCP] Se ignoró una solicitud antes de iniciar la partida.");
-                    continue;
-                }
                 notificarObservadores(new ContextoConexion(null, 0, bytes, cliente.idJugador + 1));
             }
         } catch (IOException e) {
